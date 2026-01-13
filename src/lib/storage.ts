@@ -1,46 +1,67 @@
 import { UserProfile, StoredProfile } from '@/types';
+import { handleStorageError } from './error-handling';
 
-const STORAGE_KEY = 'cv-generator-profile';
-const CURRENT_VERSION = '1.0';
+const PROFILE_KEY = 'cv-generator-profile';
+const CURRENT_VERSION = '1.0.0';
 
+/**
+ * Save user profile to localStorage with versioning
+ */
 export function saveProfileToLocalStorage(profile: UserProfile): void {
   try {
-    const profileData: StoredProfile = {
+    const storedProfile: StoredProfile = {
       version: CURRENT_VERSION,
       lastUpdated: new Date().toISOString(),
       profile
     };
     
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(profileData));
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(storedProfile));
   } catch (error) {
-    if (error instanceof Error && error.name === 'QuotaExceededError') {
-      throw new Error('Storage full. Please clear old data in settings.');
-    }
-    throw error;
+    handleStorageError(error as Error, 'saving profile');
   }
 }
 
+/**
+ * Load user profile from localStorage with version migration
+ */
 export function loadProfileFromLocalStorage(): UserProfile | null {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(PROFILE_KEY);
     if (!stored) return null;
-
-    const data: StoredProfile = JSON.parse(stored);
-
-    // Handle version migrations
-    if (data.version === '1.0') {
-      return data.profile;
+    
+    const storedProfile: StoredProfile = JSON.parse(stored);
+    
+    // Handle version migration if needed
+    if (storedProfile.version !== CURRENT_VERSION) {
+      // Perform migration logic here if needed
+      console.log(`Migrating profile from version ${storedProfile.version} to ${CURRENT_VERSION}`);
     }
-
-    // Future: if (data.version === '0.9') { migrate to 1.0 }
-
-    return data.profile;
+    
+    return storedProfile.profile;
   } catch (error) {
-    console.error('Failed to load profile from localStorage:', error);
+    console.warn('Failed to load profile from localStorage:', error);
     return null;
   }
 }
 
+/**
+ * Clear profile from localStorage
+ */
 export function clearProfileFromLocalStorage(): void {
-  localStorage.removeItem(STORAGE_KEY);
+  try {
+    localStorage.removeItem(PROFILE_KEY);
+  } catch (error) {
+    console.warn('Failed to clear profile from localStorage:', error);
+  }
+}
+
+/**
+ * Check if profile exists in localStorage
+ */
+export function hasStoredProfile(): boolean {
+  try {
+    return localStorage.getItem(PROFILE_KEY) !== null;
+  } catch (error) {
+    return false;
+  }
 }
