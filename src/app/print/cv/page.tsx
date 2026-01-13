@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { PrintableCV } from '@/components/print/PrintableCV';
+import { ResumeLayout } from '@/components/resume/ResumeLayout';
 import { UserProfile, TailoredContent } from '@/types';
 import { createTailoredContent } from '@/lib/cv-tailoring';
-import '../../../styles/print.css';
+import { loadProfileFromLocalStorage } from '@/lib/storage';
+import '../../../styles/resume.css';
 
 export default function PrintCVPage() {
   const searchParams = useSearchParams();
@@ -18,31 +19,36 @@ export default function PrintCVPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Get profile from localStorage using the correct key and structure
-        const storedProfile = localStorage.getItem('cv-generator-profile');
+        // Load profile using the updated storage utility that includes photo
+        const storedProfile = loadProfileFromLocalStorage();
         if (!storedProfile) {
           throw new Error('No profile found');
         }
 
-        const storedData = JSON.parse(storedProfile);
-        const parsedProfile: UserProfile = storedData.profile || storedData; // Handle both formats
-        setProfile(parsedProfile);
+        setProfile(storedProfile);
 
-        // Get job analysis from localStorage or create default
-        const storedJobAnalysis = localStorage.getItem('currentJobAnalysis');
-        const jobAnalysis = storedJobAnalysis 
-          ? JSON.parse(storedJobAnalysis)
-          : {
-              jobTitle: 'Software Developer',
-              companyName: 'Company',
-              mustHaveKeywords: [],
-              preferredKeywords: [],
-              niceToHaveKeywords: [],
-              languageRequirement: language === 'de' ? 'German' : 'English'
-            };
+        // Get job analysis from URL params or localStorage
+        let jobAnalysis;
+        const jobAnalysisParam = searchParams.get('jobAnalysis');
+        
+        if (jobAnalysisParam) {
+          jobAnalysis = JSON.parse(jobAnalysisParam);
+        } else {
+          const storedJobAnalysis = localStorage.getItem('currentJobAnalysis');
+          jobAnalysis = storedJobAnalysis 
+            ? JSON.parse(storedJobAnalysis)
+            : {
+                jobTitle: 'Training Infrastructure Engineer',
+                companyName: 'DeepRec.ai',
+                mustHaveKeywords: ['training', 'GPU', 'optimising', 'workloads', 'memory', 'parallelism', 'distributed training', 'SLURM', 'PyTorch'],
+                preferredKeywords: ['experiment tracking', 'model versioning', 'data loading', 'checkpointing', 'clusters', 'precision trade-offs', 'hardware behaviour'],
+                niceToHaveKeywords: ['custom GPU kernels', 'diffusion models', 'autoregressive models', 'VAST', 'object storage'],
+                languageRequirement: language === 'de' ? 'German' : 'English'
+              };
+        }
 
-        // Create tailored content
-        const tailored = await createTailoredContent(parsedProfile, jobAnalysis);
+        // Create tailored content with smart distribution
+        const tailored = await createTailoredContent(storedProfile, jobAnalysis);
         setTailoredContent(tailored);
 
       } catch (error) {
@@ -53,7 +59,7 @@ export default function PrintCVPage() {
     };
 
     loadData();
-  }, [language]);
+  }, [language, searchParams]);
 
   useEffect(() => {
     // Auto-trigger print dialog after content loads
@@ -75,7 +81,7 @@ export default function PrintCVPage() {
         height: '100vh',
         fontFamily: 'system-ui, sans-serif'
       }}>
-        <div>Loading CV for printing...</div>
+        <div>Loading optimized CV for printing...</div>
       </div>
     );
   }
@@ -151,7 +157,7 @@ export default function PrintCVPage() {
         </button>
       </div>
       
-      <PrintableCV 
+      <ResumeLayout 
         profile={profile} 
         tailoredContent={tailoredContent} 
         language={language}

@@ -41,58 +41,76 @@ export function enforceCVPageLimit(
   let modifiedProfile = { ...profile };
   let modifiedContent = { ...tailoredContent };
   
-  // Step 1: Very aggressive bullet reduction for 2-page limit
-  const bulletLimit = maxPages === 2 ? 3 : 4; // Only 3 bullets per experience for 2-page limit
+  // Step 1: Smart bullet reduction - keep more bullets for recent experiences
+  let totalBullets = 0;
+  const maxTotalBullets = maxPages === 2 ? 8 : 12; // Total bullets across all experiences
   
-  modifiedProfile.experience = modifiedProfile.experience.map(exp => ({
-    ...exp,
-    bullets: exp.bullets.slice(0, bulletLimit)
-  }));
+  // Prioritize recent experiences - give more bullets to recent jobs
+  const bulletDistribution = maxPages === 2 ? [4, 2, 1, 1] : [6, 3, 2, 1]; // bullets per experience
   
-  warnings.push(`Reduced bullets per experience to ${bulletLimit} to fit ${maxPages}-page limit`);
+  modifiedProfile.experience = modifiedProfile.experience.map((exp, index) => {
+    const allowedBullets = bulletDistribution[index] || 1;
+    const actualBullets = Math.min(allowedBullets, exp.bullets.length);
+    totalBullets += actualBullets;
+    
+    return {
+      ...exp,
+      bullets: exp.bullets.slice(0, actualBullets)
+    };
+  });
   
-  // Step 2: Very strict experience limit for 2-page
-  const maxExperiences = maxPages === 2 ? 3 : 4;
+  warnings.push(`Distributed ${totalBullets} bullets across experiences (${bulletDistribution.slice(0, modifiedProfile.experience.length).join(', ')}) to fit ${maxPages}-page limit`);
+  
+  // Step 2: Keep all experiences but limit total count
+  const maxExperiences = maxPages === 2 ? 4 : 5; // Keep all 4 experiences for 2-page
   if (modifiedProfile.experience.length > maxExperiences) {
     const removedCount = modifiedProfile.experience.length - maxExperiences;
     modifiedProfile.experience = modifiedProfile.experience.slice(0, maxExperiences);
     warnings.push(`Removed ${removedCount} oldest experience entries to fit ${maxPages}-page limit`);
   }
   
-  // Step 3: Aggressively trim summary for 2-page limit
-  const summaryLimit = maxPages === 2 ? 150 : 300; // Much shorter summary for 2-page
+  // Step 3: Smart summary trimming - keep key information
+  const summaryLimit = maxPages === 2 ? 200 : 300; // Allow longer summary
   if (modifiedContent.summary.length > summaryLimit) {
     const originalLength = modifiedContent.summary.length;
-    modifiedContent.summary = modifiedContent.summary.substring(0, summaryLimit) + '...';
-    warnings.push(`Trimmed summary from ${originalLength} to ${summaryLimit} characters for ${maxPages}-page limit`);
+    // Smart truncation - try to end at a sentence
+    let truncated = modifiedContent.summary.substring(0, summaryLimit);
+    const lastSentence = truncated.lastIndexOf('. ');
+    if (lastSentence > summaryLimit * 0.8) { // If we can end at a sentence without losing too much
+      truncated = truncated.substring(0, lastSentence + 1);
+    } else {
+      truncated += '...';
+    }
+    modifiedContent.summary = truncated;
+    warnings.push(`Trimmed summary from ${originalLength} to ${truncated.length} characters for ${maxPages}-page limit`);
   }
   
-  // Step 4: Strict skills categories limit for 2-page
-  const maxSkillCategories = maxPages === 2 ? 3 : 5; // Only 3 skill categories for 2-page
+  // Step 4: Keep more skill categories but optimize layout
+  const maxSkillCategories = maxPages === 2 ? 3 : 4; // Keep 3 categories for 2-page
   if (modifiedContent.reorderedSkills.length > maxSkillCategories) {
     const removedCount = modifiedContent.reorderedSkills.length - maxSkillCategories;
     modifiedContent.reorderedSkills = modifiedContent.reorderedSkills.slice(0, maxSkillCategories);
     warnings.push(`Reduced skill categories from ${modifiedContent.reorderedSkills.length + removedCount} to ${maxSkillCategories} for ${maxPages}-page limit`);
   }
   
-  // Step 5: Limit education entries strictly
-  const maxEducation = maxPages === 2 ? 1 : 2; // Only 1 education entry for 2-page
+  // Step 5: Keep both education entries
+  const maxEducation = maxPages === 2 ? 2 : 3; // Keep both education entries
   if (modifiedProfile.education.length > maxEducation) {
     const removedCount = modifiedProfile.education.length - maxEducation;
     modifiedProfile.education = modifiedProfile.education.slice(0, maxEducation);
     warnings.push(`Reduced education entries to ${maxEducation} for ${maxPages}-page limit`);
   }
   
-  // Step 6: Limit languages strictly
-  const maxLanguages = maxPages === 2 ? 2 : 3; // Only 2 languages for 2-page
+  // Step 6: Keep both languages
+  const maxLanguages = maxPages === 2 ? 2 : 3; // Keep both languages
   if (modifiedProfile.languages.length > maxLanguages) {
     const removedCount = modifiedProfile.languages.length - maxLanguages;
     modifiedProfile.languages = modifiedProfile.languages.slice(0, maxLanguages);
     warnings.push(`Reduced languages to ${maxLanguages} for ${maxPages}-page limit`);
   }
   
-  // Step 7: Limit references for 2-page
-  const maxReferences = maxPages === 2 ? 1 : 2; // Only 1 reference for 2-page
+  // Step 7: Keep reference
+  const maxReferences = maxPages === 2 ? 1 : 2; // Keep 1 reference for 2-page
   if (modifiedProfile.references.length > maxReferences) {
     const removedCount = modifiedProfile.references.length - maxReferences;
     modifiedProfile.references = modifiedProfile.references.slice(0, maxReferences);
@@ -189,9 +207,21 @@ export async function generatePDFDocument(
   let modifiedProfile = profile;
   let modifiedTailoredContent = tailoredContent;
   
+  // Ensure profile photo is included from localStorage
+  const savedPhoto = typeof window !== 'undefined' ? localStorage.getItem('profilePhoto') : null;
+  if (savedPhoto && !modifiedProfile.header.photo) {
+    modifiedProfile = {
+      ...modifiedProfile,
+      header: {
+        ...modifiedProfile.header,
+        photo: savedPhoto
+      }
+    };
+  }
+  
   // Apply page limit enforcement for CVs
   if (type === 'germanCV' || type === 'englishCV') {
-    const result = enforceCVPageLimit(profile, tailoredContent, 2);
+    const result = enforceCVPageLimit(modifiedProfile, tailoredContent, 2);
     modifiedProfile = result.profile;
     modifiedTailoredContent = result.tailoredContent;
     warnings = result.warnings;

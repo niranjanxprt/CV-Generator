@@ -48,55 +48,55 @@ export async function enhancedTailorCVContent(profile: UserProfile, jobAnalysis:
   for (let expIndex = 0; expIndex < profile.experience.length; expIndex++) {
     const exp = profile.experience[expIndex];
     
-    // Score all bullets using smart semantic matching (primary) and semantic similarity (fallback)
+    // Score all bullets using smart semantic matching (primary) - DISABLE semantic similarity for now
     const scoredBullets = await Promise.all(
       exp.bullets.map(async (bullet) => {
-        // Try smart matching first (works without API)
+        // Use only smart matching (works without API and doesn't expand content)
         const smartScore = calculateSmartBulletScore(bullet, jobAnalysis);
         
-        // Optionally enhance with semantic similarity if API is available
-        let finalScore = smartScore;
-        try {
-          const semanticScore = await calculateSemanticBulletScore(bullet, jobAnalysis);
-          // Use the higher score, but prefer smart matching if close
-          finalScore = semanticScore > smartScore * 1.2 ? semanticScore : smartScore;
-        } catch (error) {
-          // Fallback to smart matching if semantic fails
-          finalScore = smartScore;
-        }
+        // TEMPORARILY DISABLED: semantic similarity to prevent content expansion
+        // let finalScore = smartScore;
+        // try {
+        //   const semanticScore = await calculateSemanticBulletScore(bullet, jobAnalysis);
+        //   // Use the higher score, but prefer smart matching if close
+        //   finalScore = semanticScore > smartScore * 1.2 ? semanticScore : smartScore;
+        // } catch (error) {
+        //   // Fallback to smart matching if semantic fails
+        //   finalScore = smartScore;
+        // }
         
         return {
           ...bullet,
-          score: finalScore
+          score: smartScore
         };
       })
     );
     
-    // Enhance bullets with smart keyword suggestions
+    // Enhance bullets with smart keyword suggestions - MINIMAL enhancement only
     const enhancedBullets = await Promise.all(
       scoredBullets.map(async (bullet) => {
-        // Get smart keyword suggestions (always available)
+        // Get smart keyword suggestions (always available) - but limit to 1 suggestion
         const smartSuggestions = suggestSmartKeywordEnhancements(
           `${bullet.categoryLabel} ${bullet.description}`,
           jobAnalysis
-        );
+        ).slice(0, 1); // Only take the first suggestion to minimize expansion
         
-        // Optionally get semantic suggestions if API is available
-        let allSuggestions = smartSuggestions;
-        try {
-          const semanticSuggestions = await suggestKeywordEnhancements(
-            `${bullet.categoryLabel} ${bullet.description}`,
-            jobAnalysis
-          );
-          // Combine suggestions, prioritizing smart ones
-          allSuggestions = [...new Set([...smartSuggestions, ...semanticSuggestions])];
-        } catch (error) {
-          // Use only smart suggestions if semantic fails
-          allSuggestions = smartSuggestions;
-        }
+        // TEMPORARILY DISABLED: semantic suggestions to prevent content expansion
+        // let allSuggestions = smartSuggestions;
+        // try {
+        //   const semanticSuggestions = await suggestKeywordEnhancements(
+        //     `${bullet.categoryLabel} ${bullet.description}`,
+        //     jobAnalysis
+        //   );
+        //   // Combine suggestions, prioritizing smart ones
+        //   allSuggestions = [...new Set([...smartSuggestions, ...semanticSuggestions])];
+        // } catch (error) {
+        //   // Use only smart suggestions if semantic fails
+        //   allSuggestions = smartSuggestions;
+        // }
         
-        // Apply smart enhancements
-        const enhancedBullet = enhanceBulletWithSmartKeywords(bullet, allSuggestions);
+        // Apply minimal smart enhancements
+        const enhancedBullet = enhanceBulletWithSmartKeywords(bullet, smartSuggestions);
         
         // Recalculate score with enhanced content
         const finalScore = calculateSmartBulletScore(enhancedBullet, jobAnalysis);
@@ -108,9 +108,9 @@ export async function enhancedTailorCVContent(profile: UserProfile, jobAnalysis:
       })
     );
     
-    // Sort by score (highest first) and take top 6-8
+    // Sort by score (highest first) and take top 4-6 (reduced from 6-8)
     const sortedBullets = enhancedBullets.sort((a, b) => (b.score || 0) - (a.score || 0));
-    const maxBullets = Math.min(8, Math.max(6, sortedBullets.length));
+    const maxBullets = Math.min(6, Math.max(4, sortedBullets.length));
     
     tailoredProfile.experience[expIndex] = {
       ...exp,
@@ -410,16 +410,20 @@ export async function createTailoredContent(
     experience: tailoredProfile.experience
   };
   
-  // Calculate smart match score (primary) with semantic fallback
+  // Calculate smart match score (primary) - DISABLE semantic for now to prevent issues
   let matchScore: number;
   try {
-    // Try semantic matching first if API is available
-    matchScore = await calculateSemanticMatchScore(enhancedProfile, jobAnalysis);
+    // Use only smart matching for now to ensure 2-page limit
+    matchScore = calculateSmartMatchScore(enhancedProfile, jobAnalysis);
     
-    // If semantic matching returns 0 or very low score, use smart matching
-    if (matchScore < 10) {
-      matchScore = calculateSmartMatchScore(enhancedProfile, jobAnalysis);
-    }
+    // TEMPORARILY DISABLED: semantic matching to prevent content expansion
+    // // Try semantic matching first if API is available
+    // matchScore = await calculateSemanticMatchScore(enhancedProfile, jobAnalysis);
+    // 
+    // // If semantic matching returns 0 or very low score, use smart matching
+    // if (matchScore < 10) {
+    //   matchScore = calculateSmartMatchScore(enhancedProfile, jobAnalysis);
+    // }
   } catch (error) {
     // Fallback to smart matching if semantic fails
     matchScore = calculateSmartMatchScore(enhancedProfile, jobAnalysis);

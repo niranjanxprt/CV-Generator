@@ -25,17 +25,17 @@ Font.register({
 const styles = StyleSheet.create({
   page: {
     fontFamily: 'Helvetica',
-    fontSize: 11,
-    paddingTop: 50,
-    paddingBottom: 50,
-    paddingHorizontal: 50,
-    lineHeight: 1.4,
+    fontSize: 9, // Further reduced for more content
+    paddingTop: 35, // Reduced margins
+    paddingBottom: 35,
+    paddingHorizontal: 35,
+    lineHeight: 1.2, // Tighter line spacing
     backgroundColor: '#ffffff',
   },
   header: {
-    marginBottom: 30,
-    paddingBottom: 20,
-    borderBottom: '3pt solid #2c3e50',
+    marginBottom: 15, // Compact header
+    paddingBottom: 10,
+    borderBottom: '1.5pt solid #2c3e50',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -44,83 +44,83 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   headerRight: {
-    width: 80,
-    marginLeft: 20,
+    width: 60, // Smaller photo
+    marginLeft: 12,
   },
   profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 60, // Smaller photo to save space
+    height: 60,
+    borderRadius: 30,
     objectFit: 'cover',
   },
   name: {
-    fontSize: 24,
+    fontSize: 20, // Smaller name
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 4,
     color: '#2c3e50',
-    letterSpacing: 1,
+    letterSpacing: 0.5,
   },
   title: {
-    fontSize: 16,
-    marginBottom: 12,
+    fontSize: 12, // Smaller title
+    marginBottom: 6,
     color: '#34495e',
     fontWeight: 'bold',
   },
   contactRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 6,
+    marginBottom: 3,
   },
   contact: {
-    fontSize: 11,
+    fontSize: 8, // Smaller contact info
     color: '#7f8c8d',
-    marginHorizontal: 8,
+    marginHorizontal: 4,
   },
   section: {
-    marginBottom: 25,
+    marginBottom: 12, // Tighter sections
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 11, // Smaller section titles
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 6,
     textTransform: 'uppercase',
     color: '#2c3e50',
-    borderBottom: '2pt solid #3498db',
-    paddingBottom: 4,
-    letterSpacing: 0.5,
+    borderBottom: '1pt solid #3498db',
+    paddingBottom: 2,
+    letterSpacing: 0.3,
   },
   experienceEntry: {
-    marginBottom: 20,
-    paddingLeft: 5,
+    marginBottom: 10, // Tighter experience entries
+    paddingLeft: 2,
   },
   jobTitleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   jobTitle: {
-    fontSize: 13,
+    fontSize: 10, // Smaller job titles
     fontWeight: 'bold',
     color: '#2c3e50',
     flex: 1,
   },
   dateRange: {
-    fontSize: 11,
+    fontSize: 8, // Smaller dates
     color: '#7f8c8d',
     fontStyle: 'italic',
   },
   companyInfo: {
-    fontSize: 12,
-    marginBottom: 8,
+    fontSize: 9, // Smaller company info
+    marginBottom: 4,
     color: '#34495e',
     fontWeight: 'bold',
   },
   bulletPoint: {
-    fontSize: 11,
-    marginBottom: 6,
-    marginLeft: 15,
-    lineHeight: 1.5,
+    fontSize: 8, // Smaller bullets for more content
+    marginBottom: 3,
+    marginLeft: 8,
+    lineHeight: 1.3,
     color: '#2c3e50',
   },
   bulletCategory: {
@@ -131,72 +131,72 @@ const styles = StyleSheet.create({
     color: '#2c3e50',
   },
   skillCategory: {
-    marginBottom: 12,
-    paddingLeft: 5,
+    marginBottom: 6, // Tighter skill sections
+    paddingLeft: 2,
   },
   skillTitle: {
-    fontSize: 12,
+    fontSize: 9, // Smaller skill titles
     fontWeight: 'bold',
-    marginBottom: 6,
+    marginBottom: 3,
     color: '#2c3e50',
   },
   skillList: {
-    fontSize: 11,
-    marginLeft: 15,
-    lineHeight: 1.4,
+    fontSize: 8, // Smaller skill lists
+    marginLeft: 8,
+    lineHeight: 1.2,
     color: '#34495e',
   },
   educationEntry: {
-    marginBottom: 15,
-    paddingLeft: 5,
+    marginBottom: 8, // Tighter education
+    paddingLeft: 2,
   },
   degreeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   degree: {
-    fontSize: 12,
+    fontSize: 9, // Smaller degree text
     fontWeight: 'bold',
     color: '#2c3e50',
     flex: 1,
   },
   institution: {
-    fontSize: 11,
+    fontSize: 8, // Smaller institution text
     color: '#34495e',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   languageEntry: {
-    marginBottom: 8,
-    paddingLeft: 5,
+    marginBottom: 4, // Tighter languages
+    paddingLeft: 2,
   },
   languageName: {
-    fontSize: 11,
+    fontSize: 8, // Smaller language text
     fontWeight: 'bold',
     color: '#2c3e50',
   },
   languageLevel: {
-    fontSize: 11,
+    fontSize: 8,
     color: '#34495e',
   },
   referenceEntry: {
-    marginBottom: 15,
-    paddingLeft: 5,
+    marginBottom: 8, // Tighter references
+    paddingLeft: 2,
   },
   referenceName: {
-    fontSize: 12,
+    fontSize: 9, // Smaller reference text
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: 3,
+    marginBottom: 1,
   },
   referenceTitle: {
-    fontSize: 11,
+    fontSize: 8,
     color: '#34495e',
-    marginBottom: 2,
+    marginBottom: 1,
   },
   referenceContact: {
-    fontSize: 11,
+    fontSize: 8,
     color: '#7f8c8d',
   },
 });
@@ -249,7 +249,7 @@ export const GermanCVPDF: React.FC<GermanCVPDFProps> = ({ profile, tailoredConte
               <Text style={styles.companyInfo}>
                 {exp.company}, {exp.location}, {exp.startDate} – {exp.endDate}
               </Text>
-              {exp.bullets.slice(0, 6).map((bullet, bulletIndex) => (
+              {exp.bullets.map((bullet, bulletIndex) => (
                 <View key={bullet.id} style={styles.bulletPoint}>
                   <Text>
                     <Text style={styles.bulletCategory}>{bullet.categoryLabel}:</Text>

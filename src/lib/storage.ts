@@ -37,7 +37,15 @@ export function loadProfileFromLocalStorage(): UserProfile | null {
       console.log(`Migrating profile from version ${storedProfile.version} to ${CURRENT_VERSION}`);
     }
     
-    return storedProfile.profile;
+    // Load profile photo from separate localStorage key and include it
+    const profilePhoto = localStorage.getItem('profilePhoto');
+    const profile = storedProfile.profile;
+    
+    if (profilePhoto && profile) {
+      profile.header.photo = profilePhoto;
+    }
+    
+    return profile;
   } catch (error) {
     console.warn('Failed to load profile from localStorage:', error);
     return null;
