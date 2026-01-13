@@ -1,32 +1,14 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { UserProfile, TailoredContent } from '@/types';
+import { getResumeFont } from '@/fonts';
 
-// Register fonts with fallbacks
-Font.register({
-  family: 'Helvetica',
-  fonts: [
-    {
-      src: 'https://fonts.gstatic.com/s/opensans/v18/mem8YaGs126MiZpBA-UFVZ0e.ttf',
-      fontWeight: 'normal'
-    },
-    {
-      src: 'https://fonts.gstatic.com/s/opensans/v18/mem5YaGs126MiZpBA-UN7rgOUuhp.ttf',
-      fontWeight: 'bold'
-    },
-    {
-      src: 'https://fonts.gstatic.com/s/opensans/v18/mem6YaGs126MiZpBA-UFUK0Zdc1AAw.ttf',
-      fontWeight: 'normal',
-      fontStyle: 'italic'
-    }
-  ]
-});
+// No font registration needed - using standard PDF fonts
 
 const styles = StyleSheet.create({
   page: {
-    fontFamily: 'Helvetica',
-    fontSize: 9, // Further reduced for more content
-    paddingTop: 35, // Reduced margins
+    ...getResumeFont('body'),
+    paddingTop: 35,
     paddingBottom: 35,
     paddingHorizontal: 35,
     lineHeight: 1.2, // Tighter line spacing

@@ -1,17 +1,13 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { UserProfile, JobAnalysis } from '@/types';
+import { getResumeFont } from '@/fonts';
 
-// Register fonts
-Font.register({
-  family: 'Helvetica',
-  src: 'https://fonts.gstatic.com/s/opensans/v18/mem8YaGs126MiZpBA-UFVZ0e.ttf'
-});
+// No font registration needed - using standard PDF fonts
 
 const styles = StyleSheet.create({
   page: {
-    fontFamily: 'Helvetica',
-    fontSize: 10,
+    ...getResumeFont('body'),
     paddingTop: 35,
     paddingBottom: 35,
     paddingHorizontal: 35,

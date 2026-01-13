@@ -108,9 +108,9 @@ export async function enhancedTailorCVContent(profile: UserProfile, jobAnalysis:
       })
     );
     
-    // Sort by score (highest first) and take top 4-6 (reduced from 6-8)
+    // Sort by score (highest first) and take top 3-4 (reduced for 2-page limit)
     const sortedBullets = enhancedBullets.sort((a, b) => (b.score || 0) - (a.score || 0));
-    const maxBullets = Math.min(6, Math.max(4, sortedBullets.length));
+    const maxBullets = Math.min(4, Math.max(3, sortedBullets.length)); // Max 4 bullets per experience
     
     tailoredProfile.experience[expIndex] = {
       ...exp,
