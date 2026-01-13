@@ -222,18 +222,32 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
+    // Add a global function to clear localStorage for testing
+    (window as any).clearCVData = () => {
+      localStorage.removeItem('cvProfile');
+      localStorage.removeItem('profilePhoto');
+      window.location.reload();
+    };
+
     // Load existing profile from localStorage or use default
     const savedProfile = loadProfileFromLocalStorage();
-    if (savedProfile) {
-      setProfile(savedProfile);
-    } else {
+    
+    // Check if saved profile is empty/incomplete and use default instead
+    const isEmptyProfile = !savedProfile || 
+      !savedProfile.header?.name || 
+      savedProfile.experience?.length === 0 ||
+      !savedProfile.summary;
+    
+    if (isEmptyProfile) {
       // Use default profile and save it
       const defaultProfile = getDefaultProfile();
       setProfile(defaultProfile);
       saveProfileToLocalStorage(defaultProfile);
+    } else {
+      setProfile(savedProfile);
     }
 
-    // Set default profile photo
+    // Set default profile photo if none exists
     const savedPhoto = localStorage.getItem('profilePhoto');
     if (!savedPhoto) {
       // Use the image from the HTML CV
@@ -263,6 +277,16 @@ export default function ProfilePage() {
     }
   };
 
+  const handleResetToDefault = () => {
+    const defaultProfile = getDefaultProfile();
+    setProfile(defaultProfile);
+    saveProfileToLocalStorage(defaultProfile);
+    // Also reset the photo
+    localStorage.setItem('profilePhoto', 'https://www.niranjanthimmappa.com/images/niranjan.webp');
+    // Reload the page to ensure everything updates
+    window.location.reload();
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -286,6 +310,13 @@ export default function ProfilePage() {
           </div>
           <div className="flex space-x-4">
             <CVImportComponent onImportComplete={handleCVImport} />
+            <Button 
+              onClick={handleResetToDefault}
+              variant="outline"
+              className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+            >
+              Load Professional Sample
+            </Button>
             <Link href="/generate">
               <Button variant="outline">
                 Continue to Generate →
