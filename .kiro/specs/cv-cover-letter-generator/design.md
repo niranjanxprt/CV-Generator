@@ -241,18 +241,456 @@ interface CVTailoringResult {
 }
 ```
 
-### Perplexity API Integration
+### CV Import and Parsing System
 
 ```typescript
-interface PerplexityRequest {
-  model: 'llama-3.1-sonar-large-128k-online';
-  messages: Array<{
-    role: 'system' | 'user';
-    content: string;
-  }>;
-  temperature: 0.2;
-  max_tokens: 2000;
+interface CVImportSystem {
+  fileUpload: {
+    acceptedTypes: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    maxFileSize: 10 * 1024 * 1024; // 10MB
+    validation: FileValidationResult;
+  };
+  textExtraction: {
+    pdfExtraction: (file: File) => Promise<string>;
+    docExtraction: (file: File) => Promise<string>;
+    docxExtraction: (file: File) => Promise<string>;
+  };
+  aiParsing: {
+    profileExtraction: (text: string) => Promise<CVParsingResult>;
+    confidenceScoring: (parsed: Partial<UserProfile>) => number;
+    errorHandling: ParseErrorHandler;
+  };
 }
+
+interface FileValidationResult {
+  isValid: boolean;
+  errors: string[];
+  fileInfo: {
+    name: string;
+    size: number;
+    type: string;
+    lastModified: number;
+  };
+}
+
+async function parseProfileFromCV(
+  extractedText: string,
+  fileName: string
+): Promise<CVParsingResult> {
+  const prompt = `Extract professional profile information from this CV text and return structured JSON data.
+
+CV Text: ${extractedText}
+
+Extract the following information and return ONLY valid JSON:
+{
+  "header": {
+    "name": "full name",
+    "title": "professional title/role",
+    "location": "city, country",
+    "phone": "phone number",
+    "email": "email address",
+    "linkedin": "linkedin profile",
+    "github": "github profile"
+  },
+  "summary": "professional summary/profile paragraph",
+  "experience": [
+    {
+      "jobTitle": "job title",
+      "company": "company name",
+      "location": "city",
+      "startDate": "MM/YYYY",
+      "endDate": "MM/YYYY or Present",
+      "bullets": [
+        {
+          "categoryLabel": "category (e.g., Python Development)",
+          "description": "achievement description with metrics"
+        }
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "degree type",
+      "field": "field of study",
+      "institution": "institution name",
+      "startDate": "MM/YYYY",
+      "endDate": "MM/YYYY"
+    }
+  ],
+  "skills": [
+    {
+      "name": "skill category",
+      "skills": [
+        {
+          "name": "skill name",
+          "description": "skill description"
+        }
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "name": "language name",
+      "proficiency": "proficiency level"
+    }
+  ],
+  "references": [
+    {
+      "name": "reference name",
+      "title": "title",
+      "company": "company",
+      "email": "email"
+    }
+  ]
+}
+
+Rules:
+- Extract only information that is clearly present in the CV
+- Use "Present" for current positions
+- Group experience bullets by logical categories
+- Include metrics and achievements where available
+- Return empty arrays for missing sections
+- Maintain original language (German/English)`;
+
+  const response = await fetch('https://api.perplexity.ai/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'llama-3.1-sonar-large-128k-online',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an expert CV parser. Always respond with valid JSON only.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.1, // Low temperature for consistent parsing
+      max_tokens: 4000
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`CV parsing failed: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices[0].message.content;
+
+  // Clean markdown fences
+  const cleaned = content
+    .replace(/```json\n?/g, '')
+    .replace(/```\n?/g, '')
+    .trim();
+
+  try {
+    const parsedProfile = JSON.parse(cleaned);
+    const confidence = calculateParsingConfidence(parsedProfile, extractedText);
+    
+    return {
+      success: true,
+      extractedText,
+      parsedProfile: addIdsToProfile(parsedProfile),
+      confidence,
+      warnings: generateParsingWarnings(parsedProfile),
+      errors: []
+    };
+  } catch (parseError) {
+    return {
+      success: false,
+      extractedText,
+      parsedProfile: {},
+      confidence: 0,
+      warnings: [],
+      errors: [`Failed to parse CV structure: ${parseError.message}`]
+    };
+  }
+}
+
+function calculateParsingConfidence(
+  parsed: Partial<UserProfile>,
+  originalText: string
+): number {
+  let score = 0;
+  let maxScore = 0;
+
+  // Header information (40 points max)
+  maxScore += 40;
+  if (parsed.header?.name) score += 10;
+  if (parsed.header?.email) score += 10;
+  if (parsed.header?.phone) score += 5;
+  if (parsed.header?.title) score += 10;
+  if (parsed.header?.location) score += 5;
+
+  // Experience section (30 points max)
+  maxScore += 30;
+  if (parsed.experience?.length > 0) {
+    score += 15;
+    if (parsed.experience.some(exp => exp.bullets?.length > 0)) score += 15;
+  }
+
+  // Education section (15 points max)
+  maxScore += 15;
+  if (parsed.education?.length > 0) score += 15;
+
+  // Skills section (10 points max)
+  maxScore += 10;
+  if (parsed.skills?.length > 0) score += 10;
+
+  // Summary section (5 points max)
+  maxScore += 5;
+  if (parsed.summary) score += 5;
+
+  return Math.round((score / maxScore) * 100);
+}
+
+function addIdsToProfile(parsed: Partial<UserProfile>): Partial<UserProfile> {
+  // Add unique IDs to all entries for React keys
+  return {
+    ...parsed,
+    experience: parsed.experience?.map(exp => ({
+      ...exp,
+      id: crypto.randomUUID(),
+      bullets: exp.bullets?.map(bullet => ({
+        ...bullet,
+        id: crypto.randomUUID()
+      })) || []
+    })) || [],
+    education: parsed.education?.map(edu => ({
+      ...edu,
+      id: crypto.randomUUID()
+    })) || [],
+    skills: parsed.skills?.map(skill => ({
+      ...skill,
+      id: crypto.randomUUID(),
+      skills: skill.skills?.map(s => ({ ...s, keywords: [] })) || []
+    })) || [],
+    languages: parsed.languages?.map(lang => ({
+      ...lang,
+      id: crypto.randomUUID()
+    })) || [],
+    references: parsed.references?.map(ref => ({
+      ...ref,
+      id: crypto.randomUUID()
+    })) || []
+  };
+}
+
+function generateParsingWarnings(parsed: Partial<UserProfile>): string[] {
+  const warnings: string[] = [];
+
+  if (!parsed.header?.email) {
+    warnings.push("Email address not found - please add manually");
+  }
+  
+  if (!parsed.header?.phone) {
+    warnings.push("Phone number not found - please add manually");
+  }
+  
+  if (!parsed.experience?.length) {
+    warnings.push("No work experience found - please add manually");
+  }
+  
+  if (!parsed.skills?.length) {
+    warnings.push("No skills section found - please add manually");
+  }
+
+  if (parsed.experience?.some(exp => !exp.bullets?.length)) {
+    warnings.push("Some positions missing achievement details - please review");
+  }
+
+  return warnings;
+}
+```
+
+### File Processing Pipeline
+
+```typescript
+// Text extraction from different file types
+async function extractTextFromFile(file: File): Promise<string> {
+  const fileType = file.type;
+  
+  switch (fileType) {
+    case 'application/pdf':
+      return extractTextFromPDF(file);
+    case 'application/msword':
+      return extractTextFromDOC(file);
+    case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+      return extractTextFromDOCX(file);
+    default:
+      throw new Error(`Unsupported file type: ${fileType}`);
+  }
+}
+
+async function extractTextFromPDF(file: File): Promise<string> {
+  // Using pdf-parse or similar library
+  const pdfParse = await import('pdf-parse');
+  const arrayBuffer = await file.arrayBuffer();
+  const data = await pdfParse.default(Buffer.from(arrayBuffer));
+  return data.text;
+}
+
+async function extractTextFromDOCX(file: File): Promise<string> {
+  // Using mammoth.js for DOCX files
+  const mammoth = await import('mammoth');
+  const arrayBuffer = await file.arrayBuffer();
+  const result = await mammoth.extractRawText({ arrayBuffer });
+  return result.value;
+}
+
+async function extractTextFromDOC(file: File): Promise<string> {
+  // For older DOC files, might need different approach
+  // Could use a service or convert to DOCX first
+  throw new Error('DOC files not yet supported. Please convert to DOCX or PDF.');
+}
+```
+
+## CV Import User Interface
+
+### File Upload Component
+
+```typescript
+interface CVImportProps {
+  onImportComplete: (profile: Partial<UserProfile>) => void;
+  onImportError: (error: string) => void;
+}
+
+function CVImportComponent({ onImportComplete, onImportError }: CVImportProps) {
+  const [uploadState, setUploadState] = useState<FileUploadState>({
+    isUploading: false,
+    isParsing: false,
+    progress: 0,
+    error: null,
+    result: null
+  });
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      setUploadState(prev => ({ ...prev, isUploading: true, error: null }));
+
+      // Validate file
+      const validation = validateCVFile(file);
+      if (!validation.isValid) {
+        throw new Error(validation.errors.join(', '));
+      }
+
+      // Extract text
+      setUploadState(prev => ({ ...prev, progress: 25 }));
+      const extractedText = await extractTextFromFile(file);
+
+      // Parse with AI
+      setUploadState(prev => ({ ...prev, isParsing: true, progress: 50 }));
+      const parsingResult = await parseProfileFromCV(extractedText, file.name);
+
+      setUploadState(prev => ({ 
+        ...prev, 
+        progress: 100, 
+        result: parsingResult,
+        isUploading: false,
+        isParsing: false 
+      }));
+
+      if (parsingResult.success) {
+        onImportComplete(parsingResult.parsedProfile);
+      } else {
+        onImportError(parsingResult.errors.join(', '));
+      }
+
+    } catch (error) {
+      setUploadState(prev => ({
+        ...prev,
+        isUploading: false,
+        isParsing: false,
+        error: error.message
+      }));
+      onImportError(error.message);
+    }
+  };
+
+  return (
+    <div className="cv-import-component">
+      <div className="upload-area">
+        <input
+          type="file"
+          accept=".pdf,.doc,.docx"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleFileUpload(file);
+          }}
+          disabled={uploadState.isUploading || uploadState.isParsing}
+        />
+        
+        {(uploadState.isUploading || uploadState.isParsing) && (
+          <div className="progress-indicator">
+            <div className="progress-bar" style={{ width: `${uploadState.progress}%` }} />
+            <span>
+              {uploadState.isUploading ? 'Uploading...' : 'Parsing CV...'}
+            </span>
+          </div>
+        )}
+        
+        {uploadState.error && (
+          <div className="error-message">
+            {uploadState.error}
+          </div>
+        )}
+        
+        {uploadState.result && (
+          <div className="parsing-results">
+            <div className="confidence-score">
+              Parsing Confidence: {uploadState.result.confidence}%
+            </div>
+            {uploadState.result.warnings.length > 0 && (
+              <div className="warnings">
+                <h4>Please Review:</h4>
+                <ul>
+                  {uploadState.result.warnings.map((warning, idx) => (
+                    <li key={idx}>{warning}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function validateCVFile(file: File): FileValidationResult {
+  const errors: string[] = [];
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  const allowedTypes = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ];
+
+  if (file.size > maxSize) {
+    errors.push(`File too large. Maximum size is 10MB, got ${(file.size / 1024 / 1024).toFixed(1)}MB`);
+  }
+
+  if (!allowedTypes.includes(file.type)) {
+    errors.push(`Unsupported file type. Please upload PDF, DOC, or DOCX files.`);
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    fileInfo: {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified
+    }
+  };
+}
+```
 
 async function analyzeJobWithPerplexity(
   jobDescription: string
@@ -1761,6 +2199,10 @@ const jobDescriptionSchema = z.string()
 ### Property 13: Privacy and Local Storage
 *For any* user interaction, all profile data should be stored only in browser localStorage and the system should never require authentication or send personal data to external services.
 **Validates: Requirements 11.1, 11.2**
+
+### Property 14: CV Import Data Integrity
+*For any* valid CV file upload, the system should extract text content, parse it into structured profile data, and populate form fields while maintaining data integrity and providing confidence scoring.
+**Validates: Requirements 1.7, 1.8**
 
 ## Testing Strategy
 

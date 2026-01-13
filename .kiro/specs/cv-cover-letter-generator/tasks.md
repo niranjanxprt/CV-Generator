@@ -24,21 +24,31 @@ This implementation plan breaks down the CV and Cover Letter Generator into disc
   - **Property 1: Profile Data Persistence Round Trip**
   - **Validates: Requirements 1.2, 1.3**
 
-- [ ] 3. Create profile management system
+- [ ] 3. Create profile management system with CV import
   - Build ProfileForm component with sections: header, summary, experience, education, skills, languages, references
   - Implement auto-save to localStorage with 1-second debounce using React Hook Form
   - Add visual "Saved" indicator when auto-save completes
   - Create profile loading functionality with version migration support
-  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
+  - Add CVImportComponent with file upload interface for PDF, DOC, DOCX files
+  - Implement file validation (10MB limit, supported file types)
+  - Create progress indicators for upload and parsing operations
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10_
 
 - [ ] 3.1 Write property test for auto-save debouncing
   - **Property 2: Auto-save Debouncing**
   - **Validates: Requirements 1.2**
 
-- [ ] 3.2 Write unit tests for profile form validation
-  - Test required field validation and form submission
-  - Test localStorage quota exceeded handling
-  - _Requirements: 1.6, 11.7_
+- [ ] 3.3 Implement CV text extraction and AI parsing system
+  - Create extractTextFromFile function supporting PDF, DOCX file processing
+  - Implement parseProfileFromCV function using Perplexity API for structured data extraction
+  - Build calculateParsingConfidence function to score extraction quality
+  - Add addIdsToProfile and generateParsingWarnings utility functions
+  - Create error handling for unsupported file types and parsing failures
+  - _Requirements: 1.7, 1.8, 1.9, 1.10_
+
+- [ ] 3.4 Write property test for CV import functionality
+  - **Property 14: CV Import Data Integrity**
+  - **Validates: Requirements 1.7, 1.8**
 
 - [ ] 4. Implement Perplexity API integration
   - Create analyzeJobWithPerplexity function with proper request/response handling

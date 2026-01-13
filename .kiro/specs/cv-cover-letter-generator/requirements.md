@@ -37,9 +37,9 @@ A **simple web application** that lets users generate tailored CVs and cover let
 
 ## Requirements
 
-### Requirement 1: Enter Professional Profile
+### Requirement 1: Enter Professional Profile with CV Import
 
-**User Story:** As a user, I want to enter my profile once, so that I can generate multiple documents without re-entering data.
+**User Story:** As a user, I want to enter my profile once or import from existing CV, so that I can generate multiple documents without re-entering data.
 
 #### Acceptance Criteria
 
@@ -48,6 +48,11 @@ A **simple web application** that lets users generate tailored CVs and cover let
 3. WHEN user returns to profile page, THE System SHALL load previously saved data from localStorage
 4. THE System SHALL display header section with name, title, location, phone, email, LinkedIn, GitHub fields
 5. THE System SHALL provide character counter for job description textarea with 10,000 character limit
+6. WHEN user clicks "Import from CV" button, THE System SHALL display file upload interface accepting PDF, DOC, DOCX files up to 10MB
+7. WHEN user uploads CV file, THE System SHALL extract text content and use AI to parse profile data into structured format
+8. WHEN CV parsing completes, THE System SHALL populate profile form fields with extracted data and allow user to review/edit before saving
+9. THE System SHALL handle parsing errors gracefully and provide fallback manual entry option
+10. THE System SHALL support multiple CV formats and languages (German/English) for import
 
 ### Requirement 2: Paste Job Description & Analyze
 

@@ -142,7 +142,9 @@ export enum ErrorType {
   INVALID_RESPONSE = 'INVALID_RESPONSE',
   STORAGE_QUOTA_EXCEEDED = 'STORAGE_QUOTA_EXCEEDED',
   PDF_GENERATION_FAILED = 'PDF_GENERATION_FAILED',
-  VALIDATION_ERROR = 'VALIDATION_ERROR'
+  VALIDATION_ERROR = 'VALIDATION_ERROR',
+  FILE_UPLOAD_ERROR = 'FILE_UPLOAD_ERROR',
+  CV_PARSING_ERROR = 'CV_PARSING_ERROR'
 }
 
 export interface ErrorHandler {
@@ -150,4 +152,29 @@ export interface ErrorHandler {
   message: string;
   action: 'retry' | 'redirect' | 'ignore';
   retryable: boolean;
+}
+
+// CV Import Types
+export interface CVImportRequest {
+  file: File;
+  fileName: string;
+  fileSize: number;
+  fileType: 'pdf' | 'doc' | 'docx';
+}
+
+export interface CVParsingResult {
+  success: boolean;
+  extractedText: string;
+  parsedProfile: Partial<UserProfile>;
+  confidence: number; // 0-100 percentage
+  warnings: string[];
+  errors: string[];
+}
+
+export interface FileUploadState {
+  isUploading: boolean;
+  isParsing: boolean;
+  progress: number;
+  error: string | null;
+  result: CVParsingResult | null;
 }
