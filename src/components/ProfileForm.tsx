@@ -119,6 +119,11 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
     const savedPhoto = localStorage.getItem('profilePhoto');
     if (savedPhoto) {
       setProfilePhoto(savedPhoto);
+    } else {
+      // Set default photo from Niranjan's CV
+      const defaultPhoto = 'https://www.niranjanthimmappa.com/images/niranjan.webp';
+      setProfilePhoto(defaultPhoto);
+      localStorage.setItem('profilePhoto', defaultPhoto);
     }
   }, []);
 

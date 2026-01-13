@@ -12,6 +12,9 @@ export default function HomePage() {
         <p className="text-xl text-gray-600 mb-8">
           Generate tailored professional documents in German and English with AI-powered job analysis
         </p>
+        <p className="text-lg text-blue-600 mb-8 font-medium">
+          ✨ Pre-loaded with professional sample data - ready to customize for your applications
+        </p>
         <div className="flex justify-center space-x-4">
           <Link href="/profile">
             <Button size="lg" className="px-8">
@@ -31,16 +34,16 @@ export default function HomePage() {
               Enter Your Profile
             </CardTitle>
             <CardDescription>
-              Add your professional information once and reuse it for multiple applications
+              Pre-loaded with comprehensive professional data - edit and customize for your needs
             </CardDescription>
           </CardHeader>
           <CardContent>
             <ul className="text-sm text-gray-600 space-y-2">
-              <li>• Header information (name, contact, links)</li>
-              <li>• Professional summary</li>
-              <li>• Work experience with achievements</li>
+              <li>• Complete professional profile included</li>
+              <li>• Professional photo pre-loaded</li>
+              <li>• 4 detailed work experiences</li>
               <li>• Education, skills, and languages</li>
-              <li>• Auto-saves to your browser</li>
+              <li>• Fully editable for customization</li>
             </ul>
           </CardContent>
         </Card>

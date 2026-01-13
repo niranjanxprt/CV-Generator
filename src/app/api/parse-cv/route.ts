@@ -94,26 +94,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Advanced text parsing - extract comprehensive information from CV
-    const parseAdvancedInfo = (text: string) => {
-      const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-      const lowerText = text.toLowerCase();
-      
-      // Define title keywords first
-      const titleKeywords = [
-        'engineer', 'developer', 'programmer', 'architect', 'lead', 'senior', 'junior',
-        'manager', 'director', 'supervisor', 'coordinator', 'specialist', 'analyst',
-        'consultant', 'designer', 'administrator', 'technician', 'scientist', 'researcher',
-        'expert', 'solutions', 'technical', 'domain', 'customer', 'success', 'ai', 'ml'
-      ];
-      
-      // Enhanced parsing specifically for Niranjan's CV format
-      const isNiranjanCV = text.includes('Niranjan Thimmappa') || text.includes('BuildingMinds') || text.includes('REMATIQ');
-      
-      if (isNiranjanCV) {
-        return parseNiranjanCVFormat(text, lines);
-      }
-      
     // Specialized parser for Niranjan's CV format
     const parseNiranjanCVFormat = (text: string, lines: string[]) => {
       return {
@@ -319,6 +299,27 @@ export async function POST(request: NextRequest) {
         ]
       };
     };
+
+    // Advanced text parsing - extract comprehensive information from CV
+    const parseAdvancedInfo = (text: string) => {
+      const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+      const lowerText = text.toLowerCase();
+      
+      // Define title keywords first
+      const titleKeywords = [
+        'engineer', 'developer', 'programmer', 'architect', 'lead', 'senior', 'junior',
+        'manager', 'director', 'supervisor', 'coordinator', 'specialist', 'analyst',
+        'consultant', 'designer', 'administrator', 'technician', 'scientist', 'researcher',
+        'expert', 'solutions', 'technical', 'domain', 'customer', 'success', 'ai', 'ml'
+      ];
+      
+      // Enhanced parsing specifically for Niranjan's CV format
+      const isNiranjanCV = text.includes('Niranjan Thimmappa') || text.includes('BuildingMinds') || text.includes('REMATIQ');
+      
+      if (isNiranjanCV) {
+        return parseNiranjanCVFormat(text, lines);
+      }
+
 
       // Enhanced regex patterns for better extraction
       const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
