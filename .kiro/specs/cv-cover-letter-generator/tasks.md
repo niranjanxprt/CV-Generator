@@ -13,14 +13,14 @@ This implementation plan breaks down the CV and Cover Letter Generator into disc
   - Configure environment variables for PERPLEXITY_API_KEY
   - _Requirements: Foundation for all functionality_
 
-- [-] 2. Implement core data models and types
+- [x] 2. Implement core data models and types
   - Create TypeScript interfaces for UserProfile, JobAnalysis, DocumentRequest, TailoredContent
   - Define CategorizedBullet interface with categoryLabel and description fields
   - Create Zod validation schemas for profile data and job descriptions
   - Implement utility functions: groupBy, extractTopKeywords, hashString
   - _Requirements: 1.1, 2.2, 11.1_
 
-- [-] 2.1 Write property test for data model validation
+- [x] 2.1 Write property test for data model validation
   - **Property 1: Profile Data Persistence Round Trip**
   - **Validates: Requirements 1.2, 1.3**
 
@@ -214,7 +214,29 @@ This implementation plan breaks down the CV and Cover Letter Generator into disc
   - Set up production build optimization and error monitoring
   - Validate all functionality in production environment
   - Create deployment documentation and API key setup instructions
+  - **Use Vercel CLI for deployment after local testing**
+  - **Ensure all features work locally before pushing to production**
   - _Requirements: Production deployment_
+
+## Version Control Strategy
+
+Each task will be committed to GitHub using the following workflow:
+
+1. **Complete Task Implementation**: Finish all code for the specific task
+2. **Local Testing**: Verify functionality works locally using `npm run dev`
+3. **Run Tests**: Execute relevant tests with `npm test`
+4. **Git Commit**: Commit with descriptive message following format:
+   ```
+   feat: Complete Task X - [Task Description]
+   
+   ✅ Task X: [Task Name]
+   - [Implementation details]
+   - [Key features added]
+   
+   Requirements validated: [Requirement numbers]
+   ```
+5. **Push to GitHub**: Push changes to remote repository
+6. **Update Task Status**: Mark task as completed in task list
 
 ## Notes
 

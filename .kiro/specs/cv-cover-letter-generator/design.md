@@ -1411,6 +1411,37 @@ function KeywordMatchDisplay({ matchedKeywords, missingKeywords }: KeywordDispla
 }
 ```
 
+## Version Control and Deployment Strategy
+
+### GitHub Integration
+- **Repository**: All code will be committed to GitHub using GitHub CLI
+- **Commit Strategy**: Each completed task will be committed separately with descriptive messages
+- **Branch Strategy**: Development on main branch with feature branches for complex tasks
+- **Commit Message Format**: 
+  ```
+  feat: Complete Task X - [Task Description]
+  
+  ✅ Task X: [Task Name]
+  - [Implementation details]
+  - [Key features added]
+  
+  Requirements validated: [Requirement numbers]
+  ```
+
+### Local Development Workflow
+1. Implement task functionality
+2. Test locally using `npm run dev`
+3. Run tests with `npm test`
+4. Commit changes with descriptive message
+5. Push to GitHub repository
+6. Verify deployment readiness
+
+### Deployment Process
+- **Local Testing**: Ensure all functionality works locally before deployment
+- **Vercel CLI**: Use Vercel CLI for deployment after local validation
+- **Environment Variables**: Configure PERPLEXITY_API_KEY in Vercel dashboard
+- **Production Validation**: Test all features in production environment
+
 ## Data Persistence
 
 ### localStorage Schema Migration
