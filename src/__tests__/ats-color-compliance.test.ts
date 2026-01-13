@@ -24,7 +24,7 @@ describe('ATS Color Compliance Properties', () => {
     it('should always return pure black color for any font variant', () => {
       fc.assert(
         fc.property(
-          fc.constantFrom('heading', 'body', 'minor'),
+          fc.constantFrom('heading', 'body', 'minor', 'contact'),
           (variant) => {
             const font = getResumeFont(variant);
             

@@ -18,10 +18,12 @@ export const STANDARD_FONTS = {
 export const fontConfig = {
   headingFont: STANDARD_FONTS.HELVETICA,
   bodyFont: STANDARD_FONTS.HELVETICA,
-  minorFont: STANDARD_FONTS.HELVETICA, // Added missing minorFont
-  headingSize: 16,
-  bodySize: 10,
-  minorSize: 9,
+  minorFont: STANDARD_FONTS.HELVETICA,
+  contactFont: STANDARD_FONTS.HELVETICA, // For contact info
+  headingSize: 16, // 14-16pt for headers (ATS compliant)
+  bodySize: 10,    // 10-12pt for body text (ATS compliant)
+  minorSize: 9,    // For smaller text but still readable
+  contactSize: 8,  // For contact details (minimum readable size)
   color: '#000000', // Pure black for maximum ATS readability
 } as const;
 
@@ -35,6 +37,7 @@ export interface ResumeFont {
   heading: FontConfig;
   body: FontConfig;
   minor: FontConfig;
+  contact: FontConfig;
 }
 
 /**
@@ -42,7 +45,7 @@ export interface ResumeFont {
  * @param variant - The font variant to retrieve
  * @returns FontConfig object with family, size, and color
  */
-export function getResumeFont(variant: 'heading' | 'body' | 'minor'): FontConfig {
+export function getResumeFont(variant: 'heading' | 'body' | 'minor' | 'contact'): FontConfig {
   const baseConfig = {
     family: fontConfig[`${variant}Font` as keyof typeof fontConfig] as string,
     size: fontConfig[`${variant}Size` as keyof typeof fontConfig] as number,

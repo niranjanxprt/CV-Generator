@@ -51,5 +51,6 @@ export function getDefaultATSFonts() {
     heading: getResumeFont('heading'),
     body: getResumeFont('body'),
     minor: getResumeFont('minor'),
+    contact: getResumeFont('contact'),
   };
 }

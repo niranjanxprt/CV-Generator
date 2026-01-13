@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...getResumeFont('body'),
-    fontSize: 12,
+    fontSize: 12, // Slightly larger than body for job title
     marginBottom: 6,
     fontWeight: 'bold',
   },
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   contact: {
-    fontSize: 8, // Smaller contact info
+    ...getResumeFont('contact'),
     color: '#7f8c8d',
     marginHorizontal: 4,
   },
@@ -60,7 +60,8 @@ const styles = StyleSheet.create({
     marginBottom: 12, // Tighter sections
   },
   sectionTitle: {
-    fontSize: 11, // Smaller section titles
+    ...getResumeFont('body'),
+    fontSize: 11, // Slightly larger than body for section titles
     fontWeight: 'bold',
     marginBottom: 6,
     textTransform: 'uppercase',
@@ -80,24 +81,24 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   jobTitle: {
-    fontSize: 10, // Smaller job titles
+    ...getResumeFont('body'),
     fontWeight: 'bold',
     color: '#2c3e50',
     flex: 1,
   },
   dateRange: {
-    fontSize: 8, // Smaller dates
+    ...getResumeFont('contact'),
     color: '#7f8c8d',
     fontStyle: 'italic',
   },
   companyInfo: {
-    fontSize: 9, // Smaller company info
+    ...getResumeFont('minor'),
     marginBottom: 4,
     color: '#34495e',
     fontWeight: 'bold',
   },
   bulletPoint: {
-    fontSize: 8, // Smaller bullets for more content
+    ...getResumeFont('contact'),
     marginBottom: 3,
     marginLeft: 8,
     lineHeight: 1.3,
@@ -115,13 +116,13 @@ const styles = StyleSheet.create({
     paddingLeft: 2,
   },
   skillTitle: {
-    fontSize: 9, // Smaller skill titles
+    ...getResumeFont('minor'),
     fontWeight: 'bold',
     marginBottom: 3,
     color: '#2c3e50',
   },
   skillList: {
-    fontSize: 8, // Smaller skill lists
+    ...getResumeFont('contact'),
     marginLeft: 8,
     lineHeight: 1.2,
     color: '#34495e',
@@ -137,13 +138,13 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   degree: {
-    fontSize: 9, // Smaller degree text
+    ...getResumeFont('minor'),
     fontWeight: 'bold',
     color: '#2c3e50',
     flex: 1,
   },
   institution: {
-    fontSize: 8, // Smaller institution text
+    ...getResumeFont('contact'),
     color: '#34495e',
     marginBottom: 2,
   },
@@ -152,12 +153,12 @@ const styles = StyleSheet.create({
     paddingLeft: 2,
   },
   languageName: {
-    fontSize: 8, // Smaller language text
+    ...getResumeFont('contact'),
     fontWeight: 'bold',
     color: '#2c3e50',
   },
   languageLevel: {
-    fontSize: 8,
+    ...getResumeFont('contact'),
     color: '#34495e',
   },
   referenceEntry: {
@@ -165,19 +166,24 @@ const styles = StyleSheet.create({
     paddingLeft: 2,
   },
   referenceName: {
-    fontSize: 9, // Smaller reference text
+    ...getResumeFont('minor'),
     fontWeight: 'bold',
     color: '#2c3e50',
     marginBottom: 1,
   },
   referenceTitle: {
-    fontSize: 8,
+    ...getResumeFont('contact'),
     color: '#34495e',
     marginBottom: 1,
   },
   referenceContact: {
-    fontSize: 8,
+    ...getResumeFont('contact'),
     color: '#7f8c8d',
+  },
+  defaultText: {
+    ...getResumeFont('minor'),
+    color: '#7f8c8d',
+    paddingLeft: 5,
   },
 });
 
@@ -221,7 +227,7 @@ export const EnglishCVPDF: React.FC<EnglishCVPDFProps> = ({ profile, tailoredCon
         {/* Profile Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>PROFESSIONAL SUMMARY</Text>
-          <Text style={{ fontSize: 8, lineHeight: 1.3, color: '#2c3e50' }}>
+          <Text style={[styles.contact, { lineHeight: 1.3, color: '#2c3e50' }]}>
             {tailoredContent.summary}
           </Text>
         </View>
@@ -311,7 +317,7 @@ export const EnglishCVPDF: React.FC<EnglishCVPDFProps> = ({ profile, tailoredCon
               </View>
             ))
           ) : (
-            <Text style={{ fontSize: 11, color: '#7f8c8d', paddingLeft: 5 }}>
+            <Text style={styles.defaultText}>
               Available upon request
             </Text>
           )}
