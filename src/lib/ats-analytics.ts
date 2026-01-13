@@ -191,15 +191,6 @@ export class ATSAnalytics {
     
     // Check for compliance alerts
     await this.checkComplianceAlerts(metrics);
-    
-    // Log for debugging (remove in production)
-    console.log('ATS Analytics tracked:', {
-      format,
-      language,
-      overallScore: metrics.atsCompliance.overallScore,
-      generationTime,
-      success
-    });
   }
 
   /**

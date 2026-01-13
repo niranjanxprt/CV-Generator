@@ -149,14 +149,9 @@ describe('Input Validation Consistency Property Tests', () => {
           
           // Should have appropriate error messages
           if (invalidInput.trim().length < 50) {
-            // Debug: log the actual errors to understand what's happening
             const hasExpectedError = result.errors.some(error => 
               error.includes('50') || error.includes('empty') || error.includes('characters') || error.includes('required')
             );
-            if (!hasExpectedError) {
-              console.log('Input:', JSON.stringify(invalidInput));
-              console.log('Errors:', result.errors);
-            }
             expect(hasExpectedError).toBe(true);
           }
           

@@ -587,7 +587,6 @@ export class ATSValidator {
   private async getJobscanScore(documentBuffer: Buffer, format: string): Promise<number | null> {
     // Placeholder for Jobscan API integration
     // In a real implementation, this would call the Jobscan API
-    console.log('Jobscan integration not implemented - would analyze document for ATS score');
     return null;
   }
 }

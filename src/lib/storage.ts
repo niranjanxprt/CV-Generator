@@ -34,7 +34,6 @@ export function loadProfileFromLocalStorage(): UserProfile | null {
     // Handle version migration if needed
     if (storedProfile.version !== CURRENT_VERSION) {
       // Perform migration logic here if needed
-      console.log(`Migrating profile from version ${storedProfile.version} to ${CURRENT_VERSION}`);
     }
     
     // Load profile photo from separate localStorage key and include it

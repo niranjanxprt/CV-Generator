@@ -151,7 +151,7 @@ export const ATSComplianceDashboard: React.FC = () => {
         document.body.removeChild(a);
       } else {
         const data = await response.json();
-        console.log('Export data:', data);
+        // Handle JSON export data as needed
       }
     } catch (err) {
       console.error('Export error:', err);

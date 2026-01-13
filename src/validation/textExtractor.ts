@@ -122,7 +122,7 @@ export class TextExtractor {
     issues.push(...validationIssues);
     
     // Calculate metrics
-    const wordCount = extractedText.split(/\s+/).filter(word => word.length > 0).length;
+    const wordCount = extractedText.split(/\s+/).filter((word: string) => word.length > 0).length;
     const characterCount = extractedText.length;
     const extractionRate = expectedContent 
       ? this.calculateExtractionRate(extractedText, expectedContent)
@@ -140,7 +140,7 @@ export class TextExtractor {
   }
 
   /**
-   * Extract text from DOCX buffer (placeholder for future implementation)
+   * Extract text from DOCX buffer
    * @param docxBuffer - DOCX file as Buffer
    * @param expectedContent - Expected content for validation (optional)
    * @returns TextExtractionResult
@@ -152,15 +152,46 @@ export class TextExtractor {
     const issues: TextExtractionIssue[] = [];
     
     try {
-      // TODO: Implement DOCX text extraction using mammoth or similar library
-      // For now, return a placeholder implementation
-      const extractedText = docxBuffer.toString('utf-8');
+      // Check if buffer is valid
+      if (!docxBuffer || docxBuffer.length === 0) {
+        throw new Error('Empty or invalid DOCX buffer');
+      }
+      
+      // Add TextDecoder polyfill for Node.js environment
+      if (typeof global !== 'undefined' && !global.TextDecoder) {
+        const { TextDecoder } = require('util');
+        global.TextDecoder = TextDecoder;
+      }
+      
+      // Use mammoth to extract text from DOCX
+      const mammoth = require('mammoth');
+      const result = await mammoth.extractRawText({ buffer: docxBuffer });
+      
+      if (!result || typeof result.value !== 'string') {
+        throw new Error('Mammoth returned invalid result');
+      }
+      
+      const extractedText = result.value.trim();
+      
+      // Log any mammoth messages/warnings
+      if (result.messages && result.messages.length > 0) {
+        result.messages.forEach((msg: any) => {
+          if (msg.type === 'warning') {
+            issues.push({
+              type: 'structure_error',
+              severity: 'warning',
+              message: `DOCX parsing warning: ${msg.message}`,
+              suggestion: 'Check DOCX structure and formatting'
+            });
+          }
+        });
+      }
       
       // Validate extracted text
       const validationIssues = this.validateExtractedText(extractedText, expectedContent);
       issues.push(...validationIssues);
       
-      const wordCount = extractedText.split(/\s+/).filter(word => word.length > 0).length;
+      const wordCount = extractedText.split(/\s+/).filter((word: string) => word.length > 0).length;
       const characterCount = extractedText.length;
       const extractionRate = expectedContent 
         ? this.calculateExtractionRate(extractedText, expectedContent)
@@ -177,10 +208,12 @@ export class TextExtractor {
       };
       
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
       issues.push({
         type: 'encoding_error',
         severity: 'error',
-        message: `DOCX parsing failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        message: `DOCX parsing failed: ${errorMessage}`,
         suggestion: 'Ensure DOCX file is valid and not corrupted'
       });
       
@@ -334,7 +367,7 @@ export class TextExtractor {
       lines.push('✅ No issues found - text extraction is fully ATS compliant');
     } else {
       lines.push('Issues found:');
-      result.issues.forEach((issue, index) => {
+      result.issues.forEach((issue) => {
         const icon = issue.severity === 'error' ? '❌' : issue.severity === 'warning' ? '⚠️' : 'ℹ️';
         lines.push(`${icon} ${issue.message}`);
         if (issue.location) {

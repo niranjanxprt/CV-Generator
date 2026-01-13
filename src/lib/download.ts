@@ -104,9 +104,6 @@ export async function generateZipFile(
  * Provides user feedback for download operations
  */
 export function showDownloadConfirmation(filename: string): void {
-  // In a real app, you might use a toast notification library
-  console.log(`Downloaded: ${filename}`);
-  
   // Simple browser notification (optional)
   if ('Notification' in window && Notification.permission === 'granted') {
     new Notification('Download Complete', {
@@ -121,8 +118,6 @@ export function showDownloadConfirmation(filename: string): void {
  * Provides user-friendly error messages for download failures
  */
 export function handleDownloadError(error: Error, filename: string): void {
-  console.error('Download failed:', error);
-  
   // Show user-friendly error message
   alert(`Failed to download ${filename}. Please try again.`);
 }

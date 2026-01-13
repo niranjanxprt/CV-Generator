@@ -330,9 +330,6 @@ export const loadingManager = new LoadingStateManager();
  * Provides consistent success messaging
  */
 export function showSuccessMessage(message: string, duration: number = 3000): void {
-  // In a real app, you'd use a toast notification library
-  console.log('Success:', message);
-  
   // Simple browser notification (optional)
   if ('Notification' in window && Notification.permission === 'granted') {
     new Notification('Success', {
