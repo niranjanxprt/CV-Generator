@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
 import { UserProfile, JobAnalysis } from '@/types';
 
 // Register fonts
@@ -19,6 +19,21 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 30,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  headerRight: {
+    width: 60,
+    marginLeft: 15,
+  },
+  profileImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    objectFit: 'cover',
   },
   name: {
     fontSize: 14,
@@ -85,15 +100,25 @@ export const EnglishCoverLetterPDF: React.FC<EnglishCoverLetterPDFProps> = ({
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.name}>{profile.header.name}</Text>
-          <Text style={styles.title}>{profile.header.title}</Text>
-          <Text style={styles.contact}>{profile.header.location}</Text>
-          <Text style={styles.contact}>
-            {profile.header.phone} | {profile.header.email}
-          </Text>
-          <Text style={styles.contact}>
-            {profile.header.linkedin} | {profile.header.github}
-          </Text>
+          <View style={styles.headerLeft}>
+            <Text style={styles.name}>{profile.header.name}</Text>
+            <Text style={styles.title}>{profile.header.title}</Text>
+            <Text style={styles.contact}>{profile.header.location}</Text>
+            <Text style={styles.contact}>
+              {profile.header.phone} | {profile.header.email}
+            </Text>
+            <Text style={styles.contact}>
+              {profile.header.linkedin} | {profile.header.github}
+            </Text>
+          </View>
+          {profile.header.photo && (
+            <View style={styles.headerRight}>
+              <Image
+                src={profile.header.photo}
+                style={styles.profileImage}
+              />
+            </View>
+          )}
         </View>
 
         {/* Date */}

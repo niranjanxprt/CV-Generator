@@ -1,0 +1,410 @@
+/* Print-optimized CSS for CV/Resume generation */
+
+/* Screen styles for preview */
+.printable-cv {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.5;
+  color: #2c3e50;
+  background: white;
+}
+
+/* Print-specific styles */
+@media print {
+  /* Page setup */
+  @page {
+    size: A4 portrait;
+    margin: 0.75in;
+  }
+
+  /* Reset and base styles */
+  * {
+    box-shadow: none !important;
+    background: white !important;
+    color: #000 !important;
+  }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 11pt;
+    line-height: 1.4;
+    color: #000;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  .printable-cv {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Page breaks */
+  .cv-section {
+    page-break-inside: avoid;
+    margin-bottom: 1.2em;
+  }
+
+  .experience-entry {
+    page-break-inside: avoid;
+    margin-bottom: 1em;
+  }
+
+  .education-entry {
+    page-break-inside: avoid;
+  }
+
+  /* Header */
+  .cv-header {
+    margin-bottom: 1.5em;
+    padding-bottom: 0.8em;
+    border-bottom: 2pt solid #000;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .header-photo {
+    width: 80px;
+    margin-left: 20px;
+  }
+
+  .header-photo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .name {
+    font-size: 20pt;
+    font-weight: bold;
+    margin: 0 0 0.3em 0;
+    letter-spacing: 0.5pt;
+  }
+
+  .title {
+    font-size: 14pt;
+    font-weight: bold;
+    margin: 0 0 0.5em 0;
+    color: #333;
+  }
+
+  .contact-info,
+  .contact-links {
+    font-size: 10pt;
+    margin-bottom: 0.3em;
+  }
+
+  .contact-info span,
+  .contact-links span {
+    margin-right: 1em;
+  }
+
+  .contact-info span:not(:last-child)::after,
+  .contact-links span:not(:last-child)::after {
+    content: " • ";
+    margin-left: 1em;
+  }
+
+  /* Section titles */
+  .section-title {
+    font-size: 12pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin: 0 0 0.8em 0;
+    padding-bottom: 0.2em;
+    border-bottom: 1pt solid #000;
+    letter-spacing: 0.5pt;
+  }
+
+  /* Professional Summary */
+  .summary {
+    font-size: 11pt;
+    line-height: 1.5;
+    margin: 0;
+    text-align: justify;
+  }
+
+  /* Experience */
+  .job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.3em;
+  }
+
+  .job-title {
+    font-size: 12pt;
+    font-weight: bold;
+    flex: 1;
+  }
+
+  .date-range {
+    font-size: 10pt;
+    font-style: italic;
+    color: #666;
+  }
+
+  .company-info {
+    font-size: 11pt;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    color: #333;
+  }
+
+  .bullet-list {
+    margin: 0;
+    padding-left: 1.2em;
+    list-style-type: disc;
+  }
+
+  .bullet-item {
+    font-size: 10pt;
+    line-height: 1.4;
+    margin-bottom: 0.3em;
+  }
+
+  .bullet-item strong {
+    color: #000;
+  }
+
+  /* Education */
+  .education-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.3em;
+  }
+
+  .degree {
+    font-size: 11pt;
+    font-weight: bold;
+    flex: 1;
+  }
+
+  .institution {
+    font-size: 10pt;
+    color: #333;
+    margin-bottom: 0.3em;
+  }
+
+  .education-details {
+    font-size: 10pt;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  /* Skills */
+  .skill-category {
+    margin-bottom: 0.6em;
+    font-size: 10pt;
+    line-height: 1.3;
+  }
+
+  .skill-title {
+    font-weight: bold;
+    color: #000;
+  }
+
+  .skill-list {
+    margin-left: 0.5em;
+  }
+
+  /* Languages */
+  .languages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+  }
+
+  .language-entry {
+    font-size: 10pt;
+    line-height: 1.3;
+  }
+
+  .language-entry strong {
+    color: #000;
+  }
+
+  /* References */
+  .reference-entry {
+    margin-bottom: 0.8em;
+  }
+
+  .reference-name {
+    font-size: 11pt;
+    font-weight: bold;
+    margin-bottom: 0.2em;
+  }
+
+  .reference-title {
+    font-size: 10pt;
+    color: #333;
+    margin-bottom: 0.2em;
+  }
+
+  .reference-contact {
+    font-size: 10pt;
+    color: #666;
+  }
+
+  /* Hide non-essential elements */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Links */
+  a {
+    text-decoration: none;
+    color: #000;
+  }
+
+  a::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #666;
+  }
+}
+
+/* Screen preview styles to match print */
+@media screen {
+  .printable-cv {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    min-height: 11in; /* A4 height */
+  }
+
+  .cv-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #2c3e50;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .header-photo {
+    width: 80px;
+    margin-left: 20px;
+  }
+
+  .header-photo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .name {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+    letter-spacing: 1px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: #34495e;
+  }
+
+  .contact-info,
+  .contact-links {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-info span,
+  .contact-links span {
+    margin-right: 1rem;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin: 2rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3498db;
+    color: #2c3e50;
+    letter-spacing: 0.5px;
+  }
+
+  .job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
+  }
+
+  .job-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #2c3e50;
+    flex: 1;
+  }
+
+  .date-range {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #7f8c8d;
+  }
+
+  .company-info {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #34495e;
+  }
+
+  .bullet-list {
+    margin: 0 0 1.5rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .bullet-item {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+  }
+
+  .bullet-item strong {
+    color: #3498db;
+  }
+
+  .skill-category {
+    margin-bottom: 1rem;
+  }
+
+  .skill-title {
+    font-weight: bold;
+    color: #2c3e50;
+  }
+
+  .skill-list {
+    margin-left: 0.5rem;
+    color: #34495e;
+  }
+}

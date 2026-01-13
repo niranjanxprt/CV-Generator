@@ -1,0 +1,282 @@
+/* Print-optimized CSS for Cover Letter generation */
+
+/* Screen styles for preview */
+.printable-cover-letter {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.6;
+  color: #2c3e50;
+  background: white;
+}
+
+/* Print-specific styles */
+@media print {
+  /* Page setup */
+  @page {
+    size: A4 portrait;
+    margin: 1in;
+  }
+
+  /* Reset and base styles */
+  * {
+    box-shadow: none !important;
+    background: white !important;
+    color: #000 !important;
+  }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #000;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  .printable-cover-letter {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Page breaks */
+  .letter-header {
+    page-break-after: avoid;
+  }
+
+  .letter-content {
+    page-break-inside: avoid;
+  }
+
+  .letter-paragraph {
+    page-break-inside: avoid;
+    orphans: 2;
+    widows: 2;
+  }
+
+  /* Header */
+  .letter-header {
+    margin-bottom: 2em;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .header-photo {
+    width: 60px;
+    margin-left: 15px;
+  }
+
+  .header-photo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .name {
+    font-size: 16pt;
+    font-weight: bold;
+    margin: 0 0 0.3em 0;
+  }
+
+  .title {
+    font-size: 12pt;
+    margin: 0 0 0.5em 0;
+    color: #333;
+  }
+
+  .contact-info {
+    font-size: 10pt;
+    line-height: 1.3;
+  }
+
+  .contact-info div {
+    margin-bottom: 0.2em;
+  }
+
+  /* Date */
+  .letter-date {
+    font-size: 10pt;
+    text-align: right;
+    margin-bottom: 1.5em;
+  }
+
+  /* Company Address */
+  .company-address {
+    font-size: 10pt;
+    margin-bottom: 1.5em;
+  }
+
+  /* Subject */
+  .letter-subject {
+    font-size: 11pt;
+    font-weight: bold;
+    margin-bottom: 1.5em;
+  }
+
+  /* Content */
+  .letter-content {
+    margin-bottom: 2em;
+  }
+
+  .letter-paragraph {
+    font-size: 11pt;
+    line-height: 1.5;
+    margin-bottom: 1em;
+    text-align: justify;
+    text-indent: 0;
+  }
+
+  /* Closing */
+  .letter-closing {
+    margin-top: 2em;
+  }
+
+  .closing-text {
+    font-size: 11pt;
+    margin-bottom: 2em;
+  }
+
+  .signature {
+    font-size: 11pt;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  /* Hide non-essential elements */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Links */
+  a {
+    text-decoration: none;
+    color: #000;
+  }
+
+  a::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #666;
+  }
+}
+
+/* Screen preview styles */
+@media screen {
+  .printable-cover-letter {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    min-height: 11in; /* A4 height */
+  }
+
+  .letter-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .header-photo {
+    width: 60px;
+    margin-left: 15px;
+  }
+
+  .header-photo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+  }
+
+  .title {
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+    color: #34495e;
+  }
+
+  .contact-info {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    line-height: 1.4;
+  }
+
+  .contact-info div {
+    margin-bottom: 0.3rem;
+  }
+
+  .letter-date {
+    font-size: 0.9rem;
+    text-align: right;
+    margin-bottom: 2rem;
+    color: #6c757d;
+  }
+
+  .company-address {
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    color: #495057;
+  }
+
+  .letter-subject {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    color: #2c3e50;
+  }
+
+  .letter-content {
+    margin-bottom: 3rem;
+  }
+
+  .letter-paragraph {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    text-align: justify;
+    color: #2c3e50;
+  }
+
+  .letter-closing {
+    margin-top: 3rem;
+  }
+
+  .closing-text {
+    font-size: 1rem;
+    margin-bottom: 3rem;
+    color: #2c3e50;
+  }
+
+  .signature {
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0;
+    color: #2c3e50;
+  }
+}

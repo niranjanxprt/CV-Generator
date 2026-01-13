@@ -9,6 +9,7 @@ export interface UserProfile {
     email: string;
     linkedin: string;
     github: string;
+    photo?: string; // Base64 image data or URL
   };
   summary: string;
   experience: ExperienceEntry[];

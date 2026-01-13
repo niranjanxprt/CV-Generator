@@ -1,0 +1,22 @@
+{
+  "globalShortcut": "",
+  "mcpServers": {
+    "perplexity-ask": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "server-perplexity-ask"
+      ],
+      "env": {
+        "PERPLEXITY_API_KEY": "your-perplexity-api-key-here"
+      },
+      "autoApprove": [
+        "perplexity_ask"
+      ]
+    }
+  },
+  "preferences": {
+    "quickEntryShortcut": "off",
+    "quickEntryDictationShortcut": "capslock"
+  }
+}

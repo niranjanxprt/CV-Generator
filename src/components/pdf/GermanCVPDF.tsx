@@ -1,80 +1,203 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
 import { UserProfile, TailoredContent } from '@/types';
 
-// Register fonts (in a real app, you'd load actual font files)
+// Register fonts with fallbacks
 Font.register({
   family: 'Helvetica',
-  src: 'https://fonts.gstatic.com/s/opensans/v18/mem8YaGs126MiZpBA-UFVZ0e.ttf'
+  fonts: [
+    {
+      src: 'https://fonts.gstatic.com/s/opensans/v18/mem8YaGs126MiZpBA-UFVZ0e.ttf',
+      fontWeight: 'normal'
+    },
+    {
+      src: 'https://fonts.gstatic.com/s/opensans/v18/mem5YaGs126MiZpBA-UN7rgOUuhp.ttf',
+      fontWeight: 'bold'
+    },
+    {
+      src: 'https://fonts.gstatic.com/s/opensans/v18/mem6YaGs126MiZpBA-UFUK0Zdc1AAw.ttf',
+      fontWeight: 'normal',
+      fontStyle: 'italic'
+    }
+  ]
 });
 
 const styles = StyleSheet.create({
   page: {
     fontFamily: 'Helvetica',
-    fontSize: 10,
-    paddingTop: 35,
-    paddingBottom: 35,
-    paddingHorizontal: 35,
-    lineHeight: 1.15,
+    fontSize: 11,
+    paddingTop: 50,
+    paddingBottom: 50,
+    paddingHorizontal: 50,
+    lineHeight: 1.4,
+    backgroundColor: '#ffffff',
   },
   header: {
-    marginBottom: 20,
+    marginBottom: 30,
+    paddingBottom: 20,
+    borderBottom: '3pt solid #2c3e50',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerLeft: {
+    flex: 1,
+    textAlign: 'center',
+  },
+  headerRight: {
+    width: 80,
+    marginLeft: 20,
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    objectFit: 'cover',
   },
   name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  title: {
-    fontSize: 12,
-    marginBottom: 5,
-  },
-  contact: {
-    fontSize: 10,
-    marginBottom: 3,
-  },
-  section: {
-    marginBottom: 15,
-  },
-  sectionTitle: {
-    fontSize: 12,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
+    color: '#2c3e50',
+    letterSpacing: 1,
+  },
+  title: {
+    fontSize: 16,
+    marginBottom: 12,
+    color: '#34495e',
+    fontWeight: 'bold',
+  },
+  contactRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  contact: {
+    fontSize: 11,
+    color: '#7f8c8d',
+    marginHorizontal: 8,
+  },
+  section: {
+    marginBottom: 25,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 12,
     textTransform: 'uppercase',
-    borderBottom: '1pt solid black',
-    paddingBottom: 2,
+    color: '#2c3e50',
+    borderBottom: '2pt solid #3498db',
+    paddingBottom: 4,
+    letterSpacing: 0.5,
   },
   experienceEntry: {
-    marginBottom: 12,
+    marginBottom: 20,
+    paddingLeft: 5,
+  },
+  jobTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
   },
   jobTitle: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: 'bold',
-    marginBottom: 2,
+    color: '#2c3e50',
+    flex: 1,
+  },
+  dateRange: {
+    fontSize: 11,
+    color: '#7f8c8d',
+    fontStyle: 'italic',
   },
   companyInfo: {
-    fontSize: 10,
-    marginBottom: 5,
+    fontSize: 12,
+    marginBottom: 8,
+    color: '#34495e',
+    fontWeight: 'bold',
   },
   bulletPoint: {
-    fontSize: 10,
-    marginBottom: 3,
-    marginLeft: 10,
+    fontSize: 11,
+    marginBottom: 6,
+    marginLeft: 15,
+    lineHeight: 1.5,
+    color: '#2c3e50',
   },
   bulletCategory: {
     fontWeight: 'bold',
+    color: '#3498db',
+  },
+  bulletText: {
+    color: '#2c3e50',
   },
   skillCategory: {
-    marginBottom: 8,
+    marginBottom: 12,
+    paddingLeft: 5,
   },
   skillTitle: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: 'bold',
-    marginBottom: 3,
+    marginBottom: 6,
+    color: '#2c3e50',
   },
   skillList: {
-    fontSize: 10,
-    marginLeft: 10,
+    fontSize: 11,
+    marginLeft: 15,
+    lineHeight: 1.4,
+    color: '#34495e',
+  },
+  educationEntry: {
+    marginBottom: 15,
+    paddingLeft: 5,
+  },
+  degreeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  degree: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    flex: 1,
+  },
+  institution: {
+    fontSize: 11,
+    color: '#34495e',
+    marginBottom: 4,
+  },
+  languageEntry: {
+    marginBottom: 8,
+    paddingLeft: 5,
+  },
+  languageName: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+  },
+  languageLevel: {
+    fontSize: 11,
+    color: '#34495e',
+  },
+  referenceEntry: {
+    marginBottom: 15,
+    paddingLeft: 5,
+  },
+  referenceName: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    marginBottom: 3,
+  },
+  referenceTitle: {
+    fontSize: 11,
+    color: '#34495e',
+    marginBottom: 2,
+  },
+  referenceContact: {
+    fontSize: 11,
+    color: '#7f8c8d',
   },
 });
 
@@ -89,14 +212,24 @@ export const GermanCVPDF: React.FC<GermanCVPDFProps> = ({ profile, tailoredConte
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.name}>{profile.header.name}</Text>
-          <Text style={styles.title}>{profile.header.title}</Text>
-          <Text style={styles.contact}>
-            {profile.header.location} • {profile.header.phone} • {profile.header.email}
-          </Text>
-          <Text style={styles.contact}>
-            {profile.header.linkedin} • {profile.header.github}
-          </Text>
+          <View style={styles.headerLeft}>
+            <Text style={styles.name}>{profile.header.name}</Text>
+            <Text style={styles.title}>{profile.header.title}</Text>
+            <Text style={styles.contact}>
+              {profile.header.location} • {profile.header.phone} • {profile.header.email}
+            </Text>
+            <Text style={styles.contact}>
+              {profile.header.linkedin} • {profile.header.github}
+            </Text>
+          </View>
+          {profile.header.photo && (
+            <View style={styles.headerRight}>
+              <Image
+                src={profile.header.photo}
+                style={styles.profileImage}
+              />
+            </View>
+          )}
         </View>
 
         {/* Profil Section */}

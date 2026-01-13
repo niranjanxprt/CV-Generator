@@ -3,28 +3,61 @@ import { DocumentType, GeneratedDocument } from '@/types';
 
 /**
  * Generate proper filename based on document type and user info
- * Follows exact format requirements from specifications
+ * Uses job title when company name is not available for better naming
  */
 export function generateFilename(
   type: DocumentType,
   userName: string,
-  companyName: string
+  companyName: string,
+  jobTitle?: string
 ): string {
   const cleanName = userName.replace(/\s+/g, '_');
-  const cleanCompany = companyName.replace(/\s+/g, '_');
+  
+  // Create a meaningful identifier from company name or job title
+  let identifier = '';
+  
+  if (companyName && 
+      companyName.trim() !== '' && 
+      companyName !== 'Company' &&
+      !companyName.includes('Not_explicitly_mentioned') &&
+      !companyName.includes('not mentioned') &&
+      !companyName.includes('unknown')) {
+    // Use company name if available and valid
+    identifier = companyName
+      .replace(/\s+/g, '_')
+      .replace(/[^a-zA-Z0-9_]/g, '')
+      .substring(0, 25); // Limit length
+  } else if (jobTitle && jobTitle.trim() !== '') {
+    // Use job title as fallback, clean it up for filename
+    identifier = jobTitle
+      .replace(/\s+/g, '_')
+      .replace(/[^a-zA-Z0-9_]/g, '')
+      .replace(/_+/g, '_') // Remove multiple underscores
+      .replace(/^_|_$/g, '') // Remove leading/trailing underscores
+      .substring(0, 20); // Limit to 20 characters
+      
+    // If still empty after cleaning, use fallback
+    if (!identifier) {
+      identifier = 'Application';
+    }
+  } else {
+    // Final fallback
+    identifier = 'Application';
+  }
+  
   const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
   
   switch (type) {
     case 'germanCV':
-      return `Lebenslauf_${cleanName}_${cleanCompany}_${date}.pdf`;
+      return `Lebenslauf_${cleanName}_${identifier}_${date}.pdf`;
     case 'germanCoverLetter':
-      return `Anschreiben_${cleanName}_${cleanCompany}_${date}.pdf`;
+      return `Anschreiben_${cleanName}_${identifier}_${date}.pdf`;
     case 'englishCV':
-      return `Resume_${cleanName}_${cleanCompany}_${date}.pdf`;
+      return `Resume_${cleanName}_${identifier}_${date}.pdf`;
     case 'englishCoverLetter':
-      return `CoverLetter_${cleanName}_${cleanCompany}_${date}.pdf`;
+      return `CoverLetter_${cleanName}_${identifier}_${date}.pdf`;
     default:
-      return `Document_${cleanName}_${cleanCompany}_${date}.pdf`;
+      return `Document_${cleanName}_${identifier}_${date}.pdf`;
   }
 }
 
@@ -50,13 +83,14 @@ export function downloadPDF(pdfBlob: Blob, filename: string): void {
 export async function generateZipFile(
   documents: GeneratedDocument[],
   userName: string,
-  companyName: string
+  companyName: string,
+  jobTitle?: string
 ): Promise<Blob> {
   const zip = new JSZip();
   
   // Add each document to the ZIP
   for (const document of documents) {
-    const filename = generateFilename(document.type, userName, companyName);
+    const filename = generateFilename(document.type, userName, companyName, jobTitle);
     zip.file(filename, document.pdfBlob);
   }
   
@@ -169,11 +203,12 @@ export async function batchDownload(
   documents: GeneratedDocument[],
   userName: string,
   companyName: string,
+  jobTitle?: string,
   delayMs: number = 500
 ): Promise<void> {
   for (let i = 0; i < documents.length; i++) {
     const document = documents[i];
-    const filename = generateFilename(document.type, userName, companyName);
+    const filename = generateFilename(document.type, userName, companyName, jobTitle);
     
     if (validateFileForDownload(document.pdfBlob)) {
       downloadPDF(document.pdfBlob, filename);

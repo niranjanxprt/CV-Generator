@@ -116,16 +116,23 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
 
   // Load saved profile photo on mount
   useEffect(() => {
-    const savedPhoto = localStorage.getItem('profilePhoto');
-    if (savedPhoto) {
-      setProfilePhoto(savedPhoto);
+    // First try to load from profile data
+    if (initialProfile?.header?.photo) {
+      setProfilePhoto(initialProfile.header.photo);
+      localStorage.setItem('profilePhoto', initialProfile.header.photo);
     } else {
-      // Set default photo from Niranjan's CV
-      const defaultPhoto = 'https://www.niranjanthimmappa.com/images/niranjan.webp';
-      setProfilePhoto(defaultPhoto);
-      localStorage.setItem('profilePhoto', defaultPhoto);
+      // Then try localStorage
+      const savedPhoto = localStorage.getItem('profilePhoto');
+      if (savedPhoto) {
+        setProfilePhoto(savedPhoto);
+      } else {
+        // Set default photo from Niranjan's CV
+        const defaultPhoto = 'https://www.niranjanthimmappa.com/images/niranjan.webp';
+        setProfilePhoto(defaultPhoto);
+        localStorage.setItem('profilePhoto', defaultPhoto);
+      }
     }
-  }, []);
+  }, [initialProfile]);
 
   // Handle photo upload
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,13 +187,21 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
 
     const timeout = setTimeout(() => {
       setIsSaving(true);
-      onProfileUpdate(data);
+      // Include profile photo in the saved data
+      const profileWithPhoto = {
+        ...data,
+        header: {
+          ...data.header,
+          photo: profilePhoto || undefined
+        }
+      };
+      onProfileUpdate(profileWithPhoto);
       setLastSaved(new Date());
       setIsSaving(false);
     }, 1000); // 1-second debounce
 
     saveTimeoutRef.current = timeout;
-  }, [onProfileUpdate]);
+  }, [onProfileUpdate, profilePhoto]);
 
   // Watch for form changes and trigger auto-save
   const watchedValues = watch();

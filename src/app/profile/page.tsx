@@ -159,42 +159,42 @@ export default function ProfilePage() {
     skills: [
       {
         id: crypto.randomUUID(),
-        name: 'AI & Technical Expertise',
+        name: 'GPU & High-Performance Computing',
         skills: [
-          { name: 'Azure AI Foundry', description: 'Production experience with prompt engineering and model evaluation', keywords: ['azure', 'ai', 'foundry'] },
-          { name: 'Python Development', description: 'FastAPI, asyncio, pandas for production AI systems', keywords: ['python', 'fastapi', 'pandas'] },
-          { name: 'Cloud Architectures', description: 'Azure and AWS concepts for scalable solutions', keywords: ['cloud', 'azure', 'aws'] },
-          { name: 'DevOps & Automation', description: 'Git, Docker, CI/CD pipelines, monitoring', keywords: ['devops', 'docker', 'git'] }
+          { name: 'GPU Acceleration', description: 'CUDA programming and GPU memory hierarchy optimization', keywords: ['GPU', 'CUDA', 'memory hierarchy', 'optimising'] },
+          { name: 'Distributed Training', description: 'PyTorch distributed training and parallelism strategies', keywords: ['distributed training', 'PyTorch', 'parallelism', 'training'] },
+          { name: 'SLURM Clusters', description: 'SLURM job scheduling and cluster resource management', keywords: ['SLURM', 'clusters', 'workloads', 'compute constraints'] },
+          { name: 'Performance Optimisation', description: 'Memory-bound and compute-bound workload optimization', keywords: ['optimising', 'performance', 'memory-bound', 'compute-bound'] }
         ]
       },
       {
         id: crypto.randomUUID(),
-        name: 'Customer-Facing & Domain Expertise',
+        name: 'ML Training Infrastructure',
         skills: [
-          { name: 'POC Leadership', description: 'Project delivery, onboarding, integration management', keywords: ['poc', 'leadership'] },
-          { name: 'Customer Success', description: 'Value maximization, platform adoption, training', keywords: ['customer', 'success'] },
-          { name: 'Technical Communication', description: 'Complex concepts, executive presentations, documentation', keywords: ['communication', 'technical'] },
-          { name: 'Domain Learning', description: 'Rapid expertise building, regulatory awareness', keywords: ['domain', 'learning'] }
+          { name: 'Training Pipeline', description: 'End-to-end model training pipeline development', keywords: ['training pipeline', 'model training', 'pipeline'] },
+          { name: 'Experiment Tracking', description: 'MLflow and model versioning for reproducible experiments', keywords: ['experiment tracking', 'model versioning', 'data versioning'] },
+          { name: 'Custom GPU Kernels', description: 'CUDA kernel development for specialized operations', keywords: ['custom GPU kernels', 'CUDA', 'GPU'] },
+          { name: 'Precision Trade-offs', description: 'Mixed precision training and quantization strategies', keywords: ['precision trade-offs', 'training', 'optimising'] }
         ]
       },
       {
         id: crypto.randomUUID(),
-        name: 'Product & Business Development',
+        name: 'Deep Learning Models',
         skills: [
-          { name: 'Product Innovation', description: 'Feature ideation, customer feedback synthesis', keywords: ['product', 'innovation'] },
-          { name: 'Revenue Growth', description: 'Upsell identification, ROI demonstration', keywords: ['revenue', 'growth'] },
-          { name: 'Market Analysis', description: 'Competitive intelligence, customer segmentation', keywords: ['market', 'analysis'] },
-          { name: 'Strategic Thinking', description: 'MBA-level business acumen, positioning', keywords: ['strategy', 'business'] }
+          { name: 'Attention Mechanisms', description: 'Transformer architectures and attention optimization', keywords: ['attention mechanisms', 'transformers', 'optimising'] },
+          { name: 'Diffusion Models', description: 'Stable diffusion and generative model training', keywords: ['diffusion models', 'generative', 'training'] },
+          { name: 'Autoregressive Models', description: 'Large language model training and inference', keywords: ['autoregressive models', 'language models', 'training'] },
+          { name: 'PyTorch Framework', description: 'Advanced PyTorch for production model development', keywords: ['PyTorch', 'training', 'GPU'] }
         ]
       },
       {
         id: crypto.randomUUID(),
-        name: 'Collaboration & Execution',
+        name: 'Storage & Infrastructure',
         skills: [
-          { name: 'Cross-Functional Leadership', description: 'Engineering, product, sales collaboration', keywords: ['collaboration', 'leadership'] },
-          { name: 'Stakeholder Management', description: 'Multi-level communication, consensus building', keywords: ['stakeholder', 'management'] },
-          { name: 'Execution Mentality', description: 'Hands-on problem-solving, ownership, results-driven', keywords: ['execution', 'problem-solving'] },
-          { name: 'Adaptability', description: 'Fast learner, startup mindset, comfortable with ambiguity', keywords: ['adaptability', 'learning'] }
+          { name: 'VAST Storage', description: 'High-performance storage systems for ML workloads', keywords: ['VAST', 'storage', 'workloads'] },
+          { name: 'Object Storage', description: 'S3-compatible storage for model artifacts and datasets', keywords: ['object storage', 'storage', 'data'] },
+          { name: 'SLURM Clusters', description: 'Multi-node cluster management and job orchestration', keywords: ['SLURM clusters', 'clusters', 'distributed'] },
+          { name: 'Data Loading', description: 'Efficient data pipeline optimization for training workloads', keywords: ['data loading', 'pipeline', 'workloads'] }
         ]
       }
     ],

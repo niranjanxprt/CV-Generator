@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { GeneratedDocument } from '@/types';
 import { X, Download, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react';
 import { useSwipeable } from 'react-swipeable';
+import { PDFViewer } from './PDFViewer';
+import { PDFErrorBoundary } from './PDFErrorBoundary';
 
 interface PreviewModalProps {
   document: GeneratedDocument;
@@ -19,7 +21,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
 }) => {
   const [pdfUrl, setPdfUrl] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(0.8); // Start with better default zoom
 
   useEffect(() => {
     // Create object URL for PDF blob
@@ -51,10 +53,10 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
           break;
         case '+':
         case '=':
-          setZoom(prev => Math.min(prev + 0.25, 3));
+          setZoom(prev => Math.min(prev + 0.2, 2));
           break;
         case '-':
-          setZoom(prev => Math.max(prev - 0.25, 0.5));
+          setZoom(prev => Math.max(prev - 0.2, 0.4));
           break;
       }
     };
@@ -79,11 +81,11 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
   });
 
   const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev + 0.25, 3));
+    setZoom(prev => Math.min(prev + 0.2, 2));
   };
 
   const handleZoomOut = () => {
-    setZoom(prev => Math.max(prev - 0.25, 0.5));
+    setZoom(prev => Math.max(prev - 0.2, 0.4));
   };
 
   return (
@@ -104,16 +106,16 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
               variant="outline"
               size="sm"
               onClick={handleZoomOut}
-              disabled={zoom <= 0.5}
+              disabled={zoom <= 0.4}
             >
               <ZoomOut className="h-4 w-4" />
             </Button>
-            <span className="text-sm px-2">{Math.round(zoom * 100)}%</span>
+            <span className="text-sm px-2 min-w-[60px] text-center">{Math.round(zoom * 100)}%</span>
             <Button
               variant="outline"
               size="sm"
               onClick={handleZoomIn}
-              disabled={zoom >= 3}
+              disabled={zoom >= 2}
             >
               <ZoomIn className="h-4 w-4" />
             </Button>
@@ -155,21 +157,20 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
 
         {/* PDF Viewer */}
         <div 
-          className="flex-1 overflow-auto p-4 bg-gray-100"
+          className="flex-1 overflow-auto p-6 bg-gray-50"
           {...swipeHandlers}
         >
           <div className="flex justify-center">
             {pdfUrl && (
-              <iframe
-                src={`${pdfUrl}#page=${currentPage}&zoom=${zoom * 100}`}
-                className="border border-gray-300 shadow-lg bg-white"
-                style={{
-                  width: `${595 * zoom}px`, // A4 width at 72 DPI
-                  height: `${842 * zoom}px`, // A4 height at 72 DPI
-                  minHeight: '600px'
-                }}
-                title={`${document.name} - Page ${currentPage}`}
-              />
+              <PDFErrorBoundary onRetry={() => window.location.reload()}>
+                <PDFViewer
+                  pdfUrl={pdfUrl}
+                  title={`${document.name} - Page ${currentPage}`}
+                  zoom={zoom}
+                  currentPage={currentPage}
+                  onDownload={onDownload}
+                />
+              </PDFErrorBoundary>
             )}
           </div>
         </div>

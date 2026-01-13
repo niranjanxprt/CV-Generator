@@ -53,16 +53,20 @@ const rateLimiter = new RateLimiter();
  * Analyzes job description using Perplexity API
  */
 export async function analyzeJobWithPerplexity(
-  jobDescription: string
+  jobDescription: string,
+  apiKey?: string
 ): Promise<JobAnalysis> {
   if (!jobDescription || jobDescription.trim().length < 50) {
     throw new Error('Job description must be at least 50 characters long');
   }
 
-  // Check for API key
-  const apiKey = process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY || process.env.PERPLEXITY_API_KEY;
-  if (!apiKey || apiKey === 'your_perplexity_api_key_here') {
-    throw new Error('PERPLEXITY_API_KEY environment variable is not set. Please add your API key to .env.local');
+  // Check for API key - prioritize parameter, then environment variables
+  const finalApiKey = apiKey || 
+    process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY || 
+    process.env.PERPLEXITY_API_KEY;
+    
+  if (!finalApiKey || finalApiKey === 'your_perplexity_api_key_here') {
+    throw new Error('API key required. Please provide your Perplexity API key.');
   }
 
   const prompt = `Analyze this job description and extract key information.
@@ -85,11 +89,11 @@ Prioritize keywords that appear 3+ times or are emphasized.`;
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        'Authorization': `Bearer ${finalApiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-large-128k-online',
+        model: 'sonar',
         messages: [
           {
             role: 'system',
@@ -206,7 +210,7 @@ const jobAnalysisCache = new JobAnalysisCache();
 /**
  * Analyzes job with caching support
  */
-export async function analyzeJobWithCaching(jobDescription: string): Promise<JobAnalysis> {
+export async function analyzeJobWithCaching(jobDescription: string, apiKey?: string): Promise<JobAnalysis> {
   // Check cache first
   const cached = jobAnalysisCache.get(jobDescription);
   if (cached) {
@@ -214,7 +218,7 @@ export async function analyzeJobWithCaching(jobDescription: string): Promise<Job
   }
 
   // Analyze with API
-  const analysis = await analyzeJobWithPerplexity(jobDescription);
+  const analysis = await analyzeJobWithPerplexity(jobDescription, apiKey);
   
   // Cache the result
   jobAnalysisCache.set(jobDescription, analysis);

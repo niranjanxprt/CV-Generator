@@ -19,7 +19,8 @@ import {
   Loader2, 
   CheckCircle, 
   AlertTriangle,
-  Package
+  Package,
+  Printer
 } from 'lucide-react';
 
 function ResultsContent() {
@@ -83,10 +84,30 @@ function ResultsContent() {
     const filename = generateFilename(
       document.type,
       profile?.header.name || 'User',
-      jobAnalysis.companyName || 'Company'
+      jobAnalysis.companyName || 'Company',
+      jobAnalysis.jobTitle
     );
     
     downloadPDF(document.pdfBlob, filename);
+  };
+
+  const handlePrintVersion = (document: GeneratedDocument) => {
+    // Determine the print URL based on document type
+    let printUrl = '';
+    let language = 'en';
+    
+    if (document.type === 'germanCV' || document.type === 'germanCoverLetter') {
+      language = 'de';
+    }
+    
+    if (document.type === 'germanCV' || document.type === 'englishCV') {
+      printUrl = `/print/cv?lang=${language}`;
+    } else {
+      printUrl = `/print/cover-letter?lang=${language}`;
+    }
+    
+    // Open in new tab for printing
+    window.open(printUrl, '_blank');
   };
 
   const handleDownloadAll = async () => {
@@ -95,7 +116,8 @@ function ResultsContent() {
     const zipBlob = await generateZipFile(
       documents,
       profile.header.name,
-      jobAnalysis.companyName || 'Company'
+      jobAnalysis.companyName || 'Company',
+      jobAnalysis.jobTitle
     );
     
     const link = document.createElement('a');
@@ -254,6 +276,13 @@ function ResultsContent() {
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     Preview
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handlePrintVersion(document)}
+                  >
+                    <Printer className="h-4 w-4 mr-2" />
+                    Print Version
                   </Button>
                   <Button onClick={() => handleDownload(document)}>
                     <Download className="h-4 w-4 mr-2" />

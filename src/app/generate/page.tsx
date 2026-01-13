@@ -10,6 +10,7 @@ import { JobAnalysis, DocumentType } from '@/types';
 import { analyzeJobWithCaching } from '@/lib/perplexity';
 import { loadProfileFromLocalStorage } from '@/lib/storage';
 import { KeywordMatchDisplay } from '@/components/KeywordMatchDisplay';
+import { ApiKeyInput } from '@/components/ApiKeyInput';
 import Link from 'next/link';
 import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 
@@ -20,11 +21,17 @@ export default function GeneratePage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedDocuments, setSelectedDocuments] = useState<Set<DocumentType>>(new Set());
   const [hasProfile, setHasProfile] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+  const [hasEnvApiKey, setHasEnvApiKey] = useState(false);
 
   useEffect(() => {
     // Check if user has a profile
     const profile = loadProfileFromLocalStorage();
     setHasProfile(!!profile);
+    
+    // Check if environment API key exists
+    const envKey = process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY;
+    setHasEnvApiKey(!!envKey && envKey !== 'your_perplexity_api_key_here');
   }, []);
 
   const handleAnalyzeJob = async () => {
@@ -33,11 +40,17 @@ export default function GeneratePage() {
       return;
     }
 
+    // Check if we have an API key (either from environment or user input)
+    if (!hasEnvApiKey && !apiKey.trim()) {
+      setError('Please provide your Perplexity API key to analyze the job description');
+      return;
+    }
+
     setIsAnalyzing(true);
     setError(null);
 
     try {
-      const analysis = await analyzeJobWithCaching(jobDescription);
+      const analysis = await analyzeJobWithCaching(jobDescription, apiKey);
       setJobAnalysis(analysis);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to analyze job description');
@@ -108,6 +121,14 @@ export default function GeneratePage() {
         </p>
       </div>
 
+      {/* API Key Input - Show only if no environment key */}
+      {!hasEnvApiKey && (
+        <ApiKeyInput 
+          onApiKeyChange={setApiKey}
+          initialApiKey={apiKey}
+        />
+      )}
+
       {/* Job Description Input */}
       <Card>
         <CardHeader>
@@ -141,7 +162,7 @@ export default function GeneratePage() {
 
           <Button 
             onClick={handleAnalyzeJob}
-            disabled={isAnalyzing || jobDescription.trim().length < 50}
+            disabled={isAnalyzing || jobDescription.trim().length < 50 || (!hasEnvApiKey && !apiKey.trim())}
             className="w-full"
           >
             {isAnalyzing ? (

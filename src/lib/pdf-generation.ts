@@ -29,7 +29,7 @@ export async function getActualPageCount(pdfBlob: Blob): Promise<number> {
 }
 
 /**
- * Enforce CV page limit by reducing content
+ * Enforce CV page limit by reducing content aggressively
  * Reduces bullets per experience and removes oldest experiences if needed
  */
 export function enforceCVPageLimit(
@@ -41,34 +41,62 @@ export function enforceCVPageLimit(
   let modifiedProfile = { ...profile };
   let modifiedContent = { ...tailoredContent };
   
-  // Step 1: Reduce bullets per experience (8 -> 6 -> 5 -> 4)
-  const bulletLimits = [6, 5, 4, 3];
+  // Step 1: Very aggressive bullet reduction for 2-page limit
+  const bulletLimit = maxPages === 2 ? 3 : 4; // Only 3 bullets per experience for 2-page limit
   
-  for (const limit of bulletLimits) {
-    modifiedProfile.experience = modifiedProfile.experience.map(exp => ({
-      ...exp,
-      bullets: exp.bullets.slice(0, limit)
-    }));
-    
-    // Check if this reduction is sufficient (we'll assume it is for now)
-    if (limit <= 5) {
-      warnings.push(`Reduced bullets per experience to ${limit} to fit page limit`);
-      break;
-    }
+  modifiedProfile.experience = modifiedProfile.experience.map(exp => ({
+    ...exp,
+    bullets: exp.bullets.slice(0, bulletLimit)
+  }));
+  
+  warnings.push(`Reduced bullets per experience to ${bulletLimit} to fit ${maxPages}-page limit`);
+  
+  // Step 2: Very strict experience limit for 2-page
+  const maxExperiences = maxPages === 2 ? 3 : 4;
+  if (modifiedProfile.experience.length > maxExperiences) {
+    const removedCount = modifiedProfile.experience.length - maxExperiences;
+    modifiedProfile.experience = modifiedProfile.experience.slice(0, maxExperiences);
+    warnings.push(`Removed ${removedCount} oldest experience entries to fit ${maxPages}-page limit`);
   }
   
-  // Step 2: Remove oldest experiences if still too long
-  if (modifiedProfile.experience.length > 4) {
-    const removedCount = modifiedProfile.experience.length - 4;
-    modifiedProfile.experience = modifiedProfile.experience.slice(0, 4);
-    warnings.push(`Removed ${removedCount} oldest experience entries to fit page limit`);
-  }
-  
-  // Step 3: Trim summary if too long
-  if (modifiedContent.summary.length > 300) {
+  // Step 3: Aggressively trim summary for 2-page limit
+  const summaryLimit = maxPages === 2 ? 150 : 300; // Much shorter summary for 2-page
+  if (modifiedContent.summary.length > summaryLimit) {
     const originalLength = modifiedContent.summary.length;
-    modifiedContent.summary = modifiedContent.summary.substring(0, 300) + '...';
-    warnings.push(`Trimmed summary from ${originalLength} to 300 characters`);
+    modifiedContent.summary = modifiedContent.summary.substring(0, summaryLimit) + '...';
+    warnings.push(`Trimmed summary from ${originalLength} to ${summaryLimit} characters for ${maxPages}-page limit`);
+  }
+  
+  // Step 4: Strict skills categories limit for 2-page
+  const maxSkillCategories = maxPages === 2 ? 3 : 5; // Only 3 skill categories for 2-page
+  if (modifiedContent.reorderedSkills.length > maxSkillCategories) {
+    const removedCount = modifiedContent.reorderedSkills.length - maxSkillCategories;
+    modifiedContent.reorderedSkills = modifiedContent.reorderedSkills.slice(0, maxSkillCategories);
+    warnings.push(`Reduced skill categories from ${modifiedContent.reorderedSkills.length + removedCount} to ${maxSkillCategories} for ${maxPages}-page limit`);
+  }
+  
+  // Step 5: Limit education entries strictly
+  const maxEducation = maxPages === 2 ? 1 : 2; // Only 1 education entry for 2-page
+  if (modifiedProfile.education.length > maxEducation) {
+    const removedCount = modifiedProfile.education.length - maxEducation;
+    modifiedProfile.education = modifiedProfile.education.slice(0, maxEducation);
+    warnings.push(`Reduced education entries to ${maxEducation} for ${maxPages}-page limit`);
+  }
+  
+  // Step 6: Limit languages strictly
+  const maxLanguages = maxPages === 2 ? 2 : 3; // Only 2 languages for 2-page
+  if (modifiedProfile.languages.length > maxLanguages) {
+    const removedCount = modifiedProfile.languages.length - maxLanguages;
+    modifiedProfile.languages = modifiedProfile.languages.slice(0, maxLanguages);
+    warnings.push(`Reduced languages to ${maxLanguages} for ${maxPages}-page limit`);
+  }
+  
+  // Step 7: Limit references for 2-page
+  const maxReferences = maxPages === 2 ? 1 : 2; // Only 1 reference for 2-page
+  if (modifiedProfile.references.length > maxReferences) {
+    const removedCount = modifiedProfile.references.length - maxReferences;
+    modifiedProfile.references = modifiedProfile.references.slice(0, maxReferences);
+    warnings.push(`Reduced references to ${maxReferences} for ${maxPages}-page limit`);
   }
   
   return {
