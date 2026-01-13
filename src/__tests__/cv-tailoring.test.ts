@@ -136,12 +136,24 @@ describe('CV Tailoring Algorithm Property Tests', () => {
         expect(tailoredProfile.education).toEqual(profile.education);
         expect(tailoredProfile.languages).toEqual(profile.languages);
         expect(tailoredProfile.references).toEqual(profile.references);
-        expect(tailoredProfile.skills).toEqual(profile.skills);
+        
+        // Skills should have the same content but may have relevanceScore added and be reordered
+        expect(tailoredProfile.skills).toHaveLength(profile.skills.length);
+        
+        // Check that the total number of individual skills is preserved
+        const originalTotalSkills = profile.skills.reduce((sum, cat) => sum + cat.skills.length, 0);
+        const tailoredTotalSkills = tailoredProfile.skills.reduce((sum, cat) => sum + cat.skills.length, 0);
+        expect(tailoredTotalSkills).toBe(originalTotalSkills);
+        
+        // Check that all skill categories have relevanceScore added
+        tailoredProfile.skills.forEach(skill => {
+          expect(typeof skill.relevanceScore).toBe('number');
+        });
         
         // Property: Experience count preservation
         expect(tailoredProfile.experience).toHaveLength(profile.experience.length);
         
-        // Property: Bullet optimization (6-8 bullets per experience)
+        // Property: Bullet optimization (up to 4 bullets per experience)
         tailoredProfile.experience.forEach((exp, index) => {
           const originalExp = profile.experience[index];
           
@@ -150,9 +162,9 @@ describe('CV Tailoring Algorithm Property Tests', () => {
           expect(exp.jobTitle).toBe(originalExp.jobTitle);
           expect(exp.company).toBe(originalExp.company);
           
-          // Should have optimized bullets (6-8 max)
-          expect(exp.bullets.length).toBeLessThanOrEqual(8);
-          expect(exp.bullets.length).toBeGreaterThanOrEqual(Math.min(6, originalExp.bullets.length));
+          // Should have optimized bullets (max 4)
+          expect(exp.bullets.length).toBeLessThanOrEqual(4);
+          expect(exp.bullets.length).toBeLessThanOrEqual(originalExp.bullets.length);
           
           // All bullets should be from original set
           exp.bullets.forEach(bullet => {

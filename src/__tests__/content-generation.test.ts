@@ -244,9 +244,9 @@ describe('Content Generation Tests', () => {
       expect(validation1.isValid).toBe(true); // Warnings but still valid
       expect(validation1.warnings.some(w => w.includes('too short'))).toBe(true);
       
-      const longContent = 'Very '.repeat(200) + 'long content';
+      const longContent = 'Very '.repeat(650) + 'long content'; // 652 words > 600 word limit
       const validation2 = validateGeneratedContent(longContent, 'coverLetter', 'English');
-      expect(validation2.isValid).toBe(true); // Updated expectation - warnings but valid
+      expect(validation2.isValid).toBe(false); // Should be invalid for too long
       expect(validation2.warnings.some(w => w.includes('too long'))).toBe(true);
     });
 
@@ -255,7 +255,7 @@ describe('Content Generation Tests', () => {
       const validation1 = validateGeneratedContent(shortSummary, 'summary', 'English');
       expect(validation1.warnings.some(w => w.includes('too short'))).toBe(true);
       
-      const longSummary = 'Very '.repeat(50) + 'long summary';
+      const longSummary = 'Very '.repeat(110) + 'long summary'; // 112 words > 100 word limit
       const validation2 = validateGeneratedContent(longSummary, 'summary', 'English');
       expect(validation2.warnings.some(w => w.includes('too long'))).toBe(true);
     });

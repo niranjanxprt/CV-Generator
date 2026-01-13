@@ -230,16 +230,36 @@ export async function analyzeJobWithCaching(jobDescription: string, apiKey?: str
  * Utility functions for keyword processing
  */
 export function extractTopKeywords(jobAnalysis: JobAnalysis, count: number): string[] {
+  // Filter out empty/whitespace-only keywords and create weighted list
   const weightedKeywords = [
-    ...jobAnalysis.mustHaveKeywords.map(kw => ({ keyword: kw, weight: 3 })),
-    ...jobAnalysis.preferredKeywords.map(kw => ({ keyword: kw, weight: 2 })),
-    ...jobAnalysis.niceToHaveKeywords.map(kw => ({ keyword: kw, weight: 1 }))
+    ...jobAnalysis.mustHaveKeywords
+      .filter(kw => kw && kw.trim().length > 0)
+      .map(kw => ({ keyword: kw.trim(), weight: 3 })),
+    ...jobAnalysis.preferredKeywords
+      .filter(kw => kw && kw.trim().length > 0)
+      .map(kw => ({ keyword: kw.trim(), weight: 2 })),
+    ...jobAnalysis.niceToHaveKeywords
+      .filter(kw => kw && kw.trim().length > 0)
+      .map(kw => ({ keyword: kw.trim(), weight: 1 }))
   ];
 
-  return weightedKeywords
-    .sort((a, b) => b.weight - a.weight)
+  // Remove duplicates, keeping the highest weight
+  const keywordMap = new Map<string, number>();
+  weightedKeywords.forEach(({ keyword, weight }) => {
+    const existing = keywordMap.get(keyword);
+    if (!existing || weight > existing) {
+      keywordMap.set(keyword, weight);
+    }
+  });
+
+  // Convert back to array and sort by weight, then alphabetically for consistency
+  return Array.from(keywordMap.entries())
+    .sort((a, b) => {
+      if (b[1] !== a[1]) return b[1] - a[1]; // Sort by weight descending
+      return a[0].localeCompare(b[0]); // Then alphabetically for consistency
+    })
     .slice(0, count)
-    .map(item => item.keyword);
+    .map(([keyword]) => keyword);
 }
 
 export function groupBy<T>(array: T[], key: keyof T): Record<string, T[]> {

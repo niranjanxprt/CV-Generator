@@ -38,6 +38,33 @@ export function calculateBulletScore(bullet: CategorizedBullet, jobAnalysis: Job
 }
 
 /**
+ * Legacy wrapper for enhanced CV tailoring
+ * @deprecated Use enhancedTailorCVContent instead
+ */
+export function tailorCVContent(profile: UserProfile, jobAnalysis: JobAnalysis): UserProfile {
+  // For property-based testing, we'll use a synchronous version
+  // that applies basic tailoring without async operations
+  const tailoredProfile = { ...profile };
+  
+  // Apply basic bullet scoring and selection
+  tailoredProfile.experience = profile.experience.map(exp => ({
+    ...exp,
+    bullets: exp.bullets
+      .map(bullet => ({
+        ...bullet,
+        score: calculateBulletScore(bullet, jobAnalysis)
+      }))
+      .sort((a, b) => (b.score || 0) - (a.score || 0))
+      .slice(0, 4) // Keep top 4 bullets per experience
+  }));
+  
+  // Reorder skills by relevance
+  tailoredProfile.skills = reorderSkillsByRelevance(profile.skills, jobAnalysis);
+  
+  return tailoredProfile;
+}
+
+/**
  * Enhanced CV tailoring with smart semantic matching and keyword integration
  * Uses both rule-based semantic matching and optional Hugging Face embeddings
  */

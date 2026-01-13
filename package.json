@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -19,6 +20,7 @@
     "@react-pdf/renderer": "^4.3.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "docx": "^9.5.1",
     "fast-check": "^4.5.3",
     "jszip": "^3.10.1",
     "lucide-react": "^0.562.0",
@@ -26,10 +28,12 @@
     "next": "16.1.1",
     "pdf-lib": "^1.17.1",
     "pdf-parse": "^1.1.4",
+    "pdfjs-dist": "^5.4.530",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.0",
     "react-swipeable": "^7.0.2",
+    "recharts": "^3.6.0",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.3.5"
   },

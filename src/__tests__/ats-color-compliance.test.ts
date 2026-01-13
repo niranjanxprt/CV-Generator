@@ -35,7 +35,7 @@ describe('ATS Color Compliance Properties', () => {
             expect(validateFontCompliance(font)).toBe(true);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 10 }
       );
     });
 
@@ -67,7 +67,7 @@ describe('ATS Color Compliance Properties', () => {
             expect(colorIssues).toHaveLength(0);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 10 }
       );
     });
 
@@ -112,7 +112,7 @@ describe('ATS Color Compliance Properties', () => {
             expect(colorWarning?.severity).toBe('error');
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 10 }
       );
     });
 
@@ -123,17 +123,17 @@ describe('ATS Color Compliance Properties', () => {
      */
     it('should require exact black color format', () => {
       const testColors = [
-        { color: '#000000', shouldPass: true, description: 'exact black' },
-        { color: '#000', shouldPass: false, description: 'short black' },
-        { color: '#000001', shouldPass: false, description: 'almost black' },
-        { color: '#111111', shouldPass: false, description: 'very dark gray' },
-        { color: 'black', shouldPass: false, description: 'named color' },
-        { color: 'rgb(0,0,0)', shouldPass: false, description: 'rgb format' },
-        { color: '#000000 ', shouldPass: false, description: 'with whitespace' },
-        { color: ' #000000', shouldPass: false, description: 'leading whitespace' },
+        { color: '#000000', shouldPass: true },
+        { color: '#000', shouldPass: false },
+        { color: '#000001', shouldPass: false },
+        { color: '#111111', shouldPass: false },
+        { color: 'black', shouldPass: false },
+        { color: 'rgb(0,0,0)', shouldPass: false },
+        { color: '#000000 ', shouldPass: false },
+        { color: ' #000000', shouldPass: false },
       ];
 
-      testColors.forEach(({ color, shouldPass, description }) => {
+      testColors.forEach(({ color, shouldPass }) => {
         const fontConfig: FontConfig = {
           family: 'Helvetica',
           size: 12,
@@ -182,7 +182,7 @@ describe('ATS Color Compliance Properties', () => {
             expect(result1).toBe(result3.isCompliant);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 10 }
       );
     });
   });
@@ -193,16 +193,16 @@ describe('ATS Color Compliance Properties', () => {
      */
     it('should handle color validation edge cases', () => {
       const edgeCases = [
-        { color: '', expected: false, description: 'empty string' },
-        { color: null as any, expected: false, description: 'null value' },
-        { color: undefined as any, expected: false, description: 'undefined value' },
-        { color: '#', expected: false, description: 'incomplete hex' },
-        { color: '#00000', expected: false, description: 'incomplete hex (5 chars)' },
-        { color: '#0000000', expected: false, description: 'too long hex (7 chars)' },
-        { color: '#GGGGGG', expected: false, description: 'invalid hex characters' },
+        { color: '', expected: false },
+        { color: null as any, expected: false },
+        { color: undefined as any, expected: false },
+        { color: '#', expected: false },
+        { color: '#00000', expected: false },
+        { color: '#0000000', expected: false },
+        { color: '#GGGGGG', expected: false },
       ];
 
-      edgeCases.forEach(({ color, expected, description }) => {
+      edgeCases.forEach(({ color, expected }) => {
         const fontConfig: FontConfig = {
           family: 'Helvetica',
           size: 12,

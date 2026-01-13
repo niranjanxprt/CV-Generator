@@ -324,7 +324,7 @@ The testing strategy employs both unit tests and property-based tests to ensure 
 
 ### Property-Based Testing Configuration
 
-**Testing Framework**: Vitest with fast-check for property-based testing
+**Testing Framework**: Jest with fast-check for property-based testing
 **Minimum Iterations**: 100 per property test (due to randomization)
 **Test Tagging**: Each property test references its design document property
 

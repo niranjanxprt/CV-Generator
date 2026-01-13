@@ -223,32 +223,32 @@ describe('Keyword Extraction and Display Property Tests', () => {
   /**
    * Property 5g: Keyword Extraction Completeness
    * For any job analysis, if we request more keywords than available,
-   * we should get all available keywords
+   * we should get all available keywords (after filtering empty/whitespace)
    */
   test('Property 5g: Keyword extraction returns all available when count exceeds total', () => {
     fc.assert(
       fc.property(
         jobAnalysisArbitrary,
         (jobAnalysis) => {
-          const totalKeywords = jobAnalysis.mustHaveKeywords.length + 
-                               jobAnalysis.preferredKeywords.length + 
-                               jobAnalysis.niceToHaveKeywords.length;
+          // Filter out empty/whitespace keywords to match the implementation
+          const validMustHave = jobAnalysis.mustHaveKeywords.filter(kw => kw && kw.trim().length > 0);
+          const validPreferred = jobAnalysis.preferredKeywords.filter(kw => kw && kw.trim().length > 0);
+          const validNiceToHave = jobAnalysis.niceToHaveKeywords.filter(kw => kw && kw.trim().length > 0);
+          
+          // Calculate total valid keywords (accounting for potential duplicates)
+          const allValidKeywords = [...validMustHave, ...validPreferred, ...validNiceToHave];
+          const uniqueValidKeywords = [...new Set(allValidKeywords.map(kw => kw.trim()))];
+          const totalValidKeywords = uniqueValidKeywords.length;
           
           // Request more keywords than available
-          const requestedCount = totalKeywords + 10;
+          const requestedCount = totalValidKeywords + 10;
           const topKeywords = extractTopKeywords(jobAnalysis, requestedCount);
           
-          // Should return exactly the total available keywords
-          expect(topKeywords.length).toBe(totalKeywords);
+          // Should return exactly the total available valid keywords
+          expect(topKeywords.length).toBe(totalValidKeywords);
           
-          // Should contain all keywords from all categories
-          const allOriginalKeywords = [
-            ...jobAnalysis.mustHaveKeywords,
-            ...jobAnalysis.preferredKeywords,
-            ...jobAnalysis.niceToHaveKeywords
-          ];
-          
-          allOriginalKeywords.forEach(keyword => {
+          // Should contain all unique valid keywords
+          uniqueValidKeywords.forEach(keyword => {
             expect(topKeywords).toContain(keyword);
           });
         }

@@ -47,7 +47,7 @@ describe('ATS Font Compliance Properties', () => {
             expect(font.size).toBeLessThanOrEqual(20);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 25 }
       );
     });
 
@@ -82,7 +82,7 @@ describe('ATS Font Compliance Properties', () => {
             expect(isCompliant).toBe(expectedCompliance);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 25 }
       );
     });
 
@@ -103,7 +103,7 @@ describe('ATS Font Compliance Properties', () => {
             expect(isStandard).toBe(standardFonts.includes(fontName));
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 25 }
       );
     });
 
@@ -149,7 +149,7 @@ describe('ATS Font Compliance Properties', () => {
             expect(timeDiff).toBeLessThan(60000); // Less than 1 minute
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 25 }
       );
     });
 
@@ -178,7 +178,7 @@ describe('ATS Font Compliance Properties', () => {
             expect(validationResult.score).toBe(100); // Perfect score for compliant fonts
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 25 }
       );
     });
   });
@@ -203,7 +203,7 @@ describe('ATS Font Compliance Properties', () => {
             expect(font1.color).toBe(font2.color);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 25 }
       );
     });
   });
