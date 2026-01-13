@@ -59,6 +59,12 @@ export async function analyzeJobWithPerplexity(
     throw new Error('Job description must be at least 50 characters long');
   }
 
+  // Check for API key
+  const apiKey = process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY || process.env.PERPLEXITY_API_KEY;
+  if (!apiKey || apiKey === 'your_perplexity_api_key_here') {
+    throw new Error('PERPLEXITY_API_KEY environment variable is not set. Please add your API key to .env.local');
+  }
+
   const prompt = `Analyze this job description and extract key information.
 
 Job Description: ${jobDescription}
@@ -79,7 +85,7 @@ Prioritize keywords that appear 3+ times or are emphasized.`;
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { UserProfile, ExperienceEntry, EducationEntry, SkillCategory, LanguageEntry, ReferenceEntry } from '@/types';
-import { Plus, Trash2, Check } from 'lucide-react';
+import { Plus, Trash2, Check, Upload, X } from 'lucide-react';
 
 // Validation schemas
 const headerSchema = z.object({
@@ -96,7 +96,10 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
   const [profile, setProfile] = useState<UserProfile>(initialProfile);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -111,10 +114,63 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
     mode: 'onChange'
   });
 
+  // Load saved profile photo on mount
+  useEffect(() => {
+    const savedPhoto = localStorage.getItem('profilePhoto');
+    if (savedPhoto) {
+      setProfilePhoto(savedPhoto);
+    }
+  }, []);
+
+  // Handle photo upload
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size must be less than 5MB');
+      return;
+    }
+
+    setIsUploadingPhoto(true);
+
+    try {
+      // Convert to base64
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string;
+        setProfilePhoto(base64);
+        localStorage.setItem('profilePhoto', base64);
+        setIsUploadingPhoto(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      alert('Failed to upload photo');
+      setIsUploadingPhoto(false);
+    }
+  };
+
+  // Remove photo
+  const removePhoto = () => {
+    setProfilePhoto(null);
+    localStorage.removeItem('profilePhoto');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   // Debounced auto-save function
   const debouncedSave = useCallback((data: UserProfile) => {
-    if (saveTimeout) {
-      clearTimeout(saveTimeout);
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
     }
 
     const timeout = setTimeout(() => {
@@ -124,25 +180,29 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
       setIsSaving(false);
     }, 1000); // 1-second debounce
 
-    setSaveTimeout(timeout);
-  }, [saveTimeout, onProfileUpdate]);
+    saveTimeoutRef.current = timeout;
+  }, [onProfileUpdate]);
 
   // Watch for form changes and trigger auto-save
   const watchedValues = watch();
   useEffect(() => {
-    if (watchedValues && JSON.stringify(watchedValues) !== JSON.stringify(initialProfile)) {
+    // Only save if values have actually changed and are different from initial
+    const currentValues = JSON.stringify(watchedValues);
+    const initialValues = JSON.stringify(initialProfile);
+    
+    if (currentValues !== initialValues && watchedValues) {
       debouncedSave(watchedValues);
     }
-  }, [watchedValues, debouncedSave, initialProfile]);
+  }, [watchedValues, debouncedSave]); // Removed initialProfile from dependencies
 
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
-      if (saveTimeout) {
-        clearTimeout(saveTimeout);
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
       }
     };
-  }, [saveTimeout]);
+  }, []);
 
   const addExperience = () => {
     const newExperience: ExperienceEntry = {
@@ -262,6 +322,77 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
           <CardTitle>Header Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Profile Photo Upload */}
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="relative">
+              {profilePhoto ? (
+                <div className="relative">
+                  <img
+                    src={profilePhoto}
+                    alt="Profile"
+                    className="w-24 h-24 rounded-full object-cover border-2 border-blue-600"
+                  />
+                  <button
+                    type="button"
+                    onClick={removePhoto}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-gray-200 border-2 border-dashed border-gray-300 flex items-center justify-center">
+                  <Upload className="h-8 w-8 text-gray-400" />
+                </div>
+              )}
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="photo-upload">Profile Photo</Label>
+              <div className="mt-1">
+                <input
+                  ref={fileInputRef}
+                  id="photo-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingPhoto}
+                  className="mr-2"
+                >
+                  {isUploadingPhoto ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      {profilePhoto ? 'Change Photo' : 'Upload Photo'}
+                    </>
+                  )}
+                </Button>
+                {profilePhoto && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={removePhoto}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+              <p className="text-sm text-gray-500 mt-1">
+                Upload a professional photo (max 5MB, JPG/PNG)
+              </p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="header.name">Full Name *</Label>
