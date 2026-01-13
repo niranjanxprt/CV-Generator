@@ -24,7 +24,7 @@ This implementation plan breaks down the CV and Cover Letter Generator into disc
   - **Property 1: Profile Data Persistence Round Trip**
   - **Validates: Requirements 1.2, 1.3**
 
-- [ ] 3. Create profile management system with CV import
+- [x] 3. Create profile management system with CV import
   - Build ProfileForm component with sections: header, summary, experience, education, skills, languages, references
   - Implement auto-save to localStorage with 1-second debounce using React Hook Form
   - Add visual "Saved" indicator when auto-save completes
@@ -34,11 +34,11 @@ This implementation plan breaks down the CV and Cover Letter Generator into disc
   - Create progress indicators for upload and parsing operations
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10_
 
-- [ ] 3.1 Write property test for auto-save debouncing
+- [x] 3.1 Write property test for auto-save debouncing
   - **Property 2: Auto-save Debouncing**
   - **Validates: Requirements 1.2**
 
-- [ ] 3.3 Implement CV text extraction and AI parsing system
+- [x] 3.3 Implement CV text extraction and AI parsing system
   - Create extractTextFromFile function supporting PDF, DOCX file processing
   - Implement parseProfileFromCV function using Perplexity API for structured data extraction
   - Build calculateParsingConfidence function to score extraction quality
@@ -46,27 +46,27 @@ This implementation plan breaks down the CV and Cover Letter Generator into disc
   - Create error handling for unsupported file types and parsing failures
   - _Requirements: 1.7, 1.8, 1.9, 1.10_
 
-- [ ] 3.4 Write property test for CV import functionality
+- [x] 3.4 Write property test for CV import functionality
   - **Property 14: CV Import Data Integrity**
   - **Validates: Requirements 1.7, 1.8**
 
-- [ ] 4. Implement Perplexity API integration
+- [x] 4. Implement Perplexity API integration
   - Create analyzeJobWithPerplexity function with proper request/response handling
   - Implement RateLimiter class for API call management
   - Add error handling for network failures, timeouts, and invalid responses
   - Create job analysis caching system using session storage
   - _Requirements: 2.4, 2.5, 2.7, 2.8_
 
-- [ ] 4.1 Write property test for keyword extraction
+- [x] 4.1 Write property test for keyword extraction
   - **Property 5: Keyword Extraction and Display**
   - **Validates: Requirements 2.5, 2.6**
 
-- [ ] 4.2 Write unit tests for API error handling
+- [x] 4.2 Write unit tests for API error handling
   - Test network failures, timeout scenarios, and malformed responses
   - Test rate limiting functionality
   - _Requirements: 12.1, 12.2, 12.7_
 
-- [ ] 5. Build job analysis and document selection interface
+- [x] 5. Build job analysis and document selection interface
   - Create GeneratePage with job description textarea and character counter
   - Implement input validation for minimum 50 characters
   - Build keyword display with color-coded badges (red/amber/green)
@@ -74,15 +74,15 @@ This implementation plan breaks down the CV and Cover Letter Generator into disc
   - Add KeywordMatchDisplay component showing matched/missing keywords
   - _Requirements: 2.1, 2.2, 2.3, 2.6, 3.1, 3.2, 3.3, 10.9_
 
-- [ ] 5.1 Write property test for input validation
+- [x] 5.1 Write property test for input validation
   - **Property 4: Input Validation Consistency**
   - **Validates: Requirements 2.3**
 
-- [ ] 5.2 Write property test for character counter
+- [x] 5.2 Write property test for character counter
   - **Property 3: Character Counter Accuracy**
   - **Validates: Requirements 2.2**
 
-- [ ] 6. Implement CV tailoring algorithm
+- [x] 6. Implement CV tailoring algorithm
   - Create calculateBulletScore function with keyword scoring (must-have +10, preferred +5, nice-to-have +2)
   - Implement tailorCVContent function with bullet selection and sorting
   - Build rewriteSummary function using Perplexity API for content enhancement
@@ -90,7 +90,7 @@ This implementation plan breaks down the CV and Cover Letter Generator into disc
   - Implement calculateMatchScore function for keyword match percentage
   - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.8_
 
-- [ ] 6.1 Write property test for CV tailoring algorithm
+- [x] 6.1 Write property test for CV tailoring algorithm
   - **Property 12: CV Tailoring Algorithm Correctness**
   - **Validates: Requirements 10.1, 10.2, 10.3**
 

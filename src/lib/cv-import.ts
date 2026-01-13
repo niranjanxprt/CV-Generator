@@ -1,6 +1,6 @@
 // CV Import and Parsing Utilities
 
-import { UserProfile, CVImportRequest, CVParsingResult, FileUploadState } from '@/types';
+import { UserProfile, CVParsingResult } from '@/types';
 
 /**
  * Validates uploaded CV file for size, type, and format
@@ -51,10 +51,15 @@ export async function extractTextFromFile(file: File): Promise<string> {
 }
 
 /**
- * Extracts text from PDF file using pdf-parse
+ * Extracts text from PDF file using pdf-parse (server-side only)
  */
 async function extractTextFromPDF(file: File): Promise<string> {
   try {
+    // Check if we're in a browser environment
+    if (typeof window !== 'undefined') {
+      throw new Error('PDF parsing is not supported in the browser. Please use the server-side API.');
+    }
+    
     // Dynamic import to avoid SSR issues
     const pdfParse = (await import('pdf-parse')).default;
     const arrayBuffer = await file.arrayBuffer();
@@ -66,15 +71,20 @@ async function extractTextFromPDF(file: File): Promise<string> {
     
     return data.text;
   } catch (error) {
-    throw new Error(`Failed to extract text from PDF: ${error.message}`);
+    throw new Error(`Failed to extract text from PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
 /**
- * Extracts text from DOCX file using mammoth
+ * Extracts text from DOCX file using mammoth (client-side compatible)
  */
 async function extractTextFromDOCX(file: File): Promise<string> {
   try {
+    // Check if we're in a browser environment
+    if (typeof window !== 'undefined') {
+      throw new Error('DOCX parsing is not supported in the browser. Please use the server-side API.');
+    }
+    
     // Dynamic import to avoid SSR issues
     const mammoth = await import('mammoth');
     const arrayBuffer = await file.arrayBuffer();
@@ -86,7 +96,7 @@ async function extractTextFromDOCX(file: File): Promise<string> {
     
     return result.value;
   } catch (error) {
-    throw new Error(`Failed to extract text from DOCX: ${error.message}`);
+    throw new Error(`Failed to extract text from DOCX: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
@@ -240,7 +250,7 @@ Rules:
         parsedProfile: {},
         confidence: 0,
         warnings: [],
-        errors: [`Failed to parse CV structure: ${parseError.message}`]
+        errors: [`Failed to parse CV structure: ${parseError instanceof Error ? parseError.message : 'Unknown parsing error'}`]
       };
     }
   } catch (error) {
@@ -250,7 +260,7 @@ Rules:
       parsedProfile: {},
       confidence: 0,
       warnings: [],
-      errors: [`CV parsing failed: ${error.message}`]
+      errors: [`CV parsing failed: ${error instanceof Error ? error.message : 'Unknown error'}`]
     };
   }
 }
@@ -258,9 +268,9 @@ Rules:
 /**
  * Calculates confidence score for parsed profile data
  */
-function calculateParsingConfidence(
+export function calculateParsingConfidence(
   parsed: Partial<UserProfile>,
-  originalText: string
+  _originalText: string
 ): number {
   let score = 0;
   let maxScore = 0;
@@ -275,18 +285,18 @@ function calculateParsingConfidence(
 
   // Experience section (30 points max)
   maxScore += 30;
-  if (parsed.experience?.length > 0) {
+  if (parsed.experience && parsed.experience.length > 0) {
     score += 15;
-    if (parsed.experience.some(exp => exp.bullets?.length > 0)) score += 15;
+    if (parsed.experience.some(exp => exp.bullets && exp.bullets.length > 0)) score += 15;
   }
 
   // Education section (15 points max)
   maxScore += 15;
-  if (parsed.education?.length > 0) score += 15;
+  if (parsed.education && parsed.education.length > 0) score += 15;
 
   // Skills section (10 points max)
   maxScore += 10;
-  if (parsed.skills?.length > 0) score += 10;
+  if (parsed.skills && parsed.skills.length > 0) score += 10;
 
   // Summary section (5 points max)
   maxScore += 5;
@@ -298,7 +308,7 @@ function calculateParsingConfidence(
 /**
  * Adds unique IDs to all profile entries for React keys
  */
-function addIdsToProfile(parsed: Partial<UserProfile>): Partial<UserProfile> {
+export function addIdsToProfile(parsed: Partial<UserProfile>): Partial<UserProfile> {
   return {
     ...parsed,
     experience: parsed.experience?.map(exp => ({
@@ -332,7 +342,7 @@ function addIdsToProfile(parsed: Partial<UserProfile>): Partial<UserProfile> {
 /**
  * Generates warnings for missing or incomplete profile data
  */
-function generateParsingWarnings(parsed: Partial<UserProfile>): string[] {
+export function generateParsingWarnings(parsed: Partial<UserProfile>): string[] {
   const warnings: string[] = [];
 
   if (!parsed.header?.email) {
@@ -343,15 +353,15 @@ function generateParsingWarnings(parsed: Partial<UserProfile>): string[] {
     warnings.push("Phone number not found - please add manually");
   }
   
-  if (!parsed.experience?.length) {
+  if (!parsed.experience || parsed.experience.length === 0) {
     warnings.push("No work experience found - please add manually");
   }
   
-  if (!parsed.skills?.length) {
+  if (!parsed.skills || parsed.skills.length === 0) {
     warnings.push("No skills section found - please add manually");
   }
 
-  if (parsed.experience?.some(exp => !exp.bullets?.length)) {
+  if (parsed.experience && parsed.experience.some(exp => !exp.bullets || exp.bullets.length === 0)) {
     warnings.push("Some positions missing achievement details - please review");
   }
 
@@ -363,7 +373,7 @@ function generateParsingWarnings(parsed: Partial<UserProfile>): string[] {
 }
 
 /**
- * Processes CV file upload from start to finish
+ * Processes CV file upload from start to finish using server-side API
  */
 export async function processCVUpload(file: File): Promise<CVParsingResult> {
   // Validate file
@@ -380,13 +390,24 @@ export async function processCVUpload(file: File): Promise<CVParsingResult> {
   }
 
   try {
-    // Extract text
-    const extractedText = await extractTextFromFile(file);
-    
-    // Parse with AI
-    const parsingResult = await parseProfileFromCV(extractedText, file.name);
-    
-    return parsingResult;
+    // Create form data for API request
+    const formData = new FormData();
+    formData.append('file', file);
+
+    // Send to server-side API for processing
+    const response = await fetch('/api/parse-cv', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Server error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+
   } catch (error) {
     return {
       success: false,
@@ -394,7 +415,7 @@ export async function processCVUpload(file: File): Promise<CVParsingResult> {
       parsedProfile: {},
       confidence: 0,
       warnings: [],
-      errors: [error.message]
+      errors: [error instanceof Error ? error.message : 'Unknown error occurred']
     };
   }
 }
