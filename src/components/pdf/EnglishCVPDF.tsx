@@ -8,9 +8,9 @@ import { getResumeFont } from '@/fonts';
 const styles = StyleSheet.create({
   page: {
     ...getResumeFont('body'),
-    paddingTop: 40,
-    paddingBottom: 40,
-    paddingHorizontal: 45,
+    paddingTop: 30,
+    paddingBottom: 30,
+    paddingHorizontal: 40,
     lineHeight: 1.4,
     backgroundColor: '#ffffff',
   },
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
     borderBottom: '1.5pt solid #000000',
-    paddingBottom: 15,
+    paddingBottom: 10,
   },
   name: {
     ...getResumeFont('heading'),
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     ...getResumeFont('body'),
     fontSize: 12,
     fontWeight: 'bold',
+    marginTop: 10,
     marginBottom: 10,
     textTransform: 'uppercase',
     color: '#000000',
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
   },
   bulletPointContainer: {
     flexDirection: 'row',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   bulletSymbol: {
     width: 10,

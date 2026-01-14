@@ -149,7 +149,7 @@
 
 /* Section Styles */
 .resume-section {
-  margin-bottom: 16pt;
+  margin-bottom: 24pt;
 }
 
 .section-title {
@@ -176,7 +176,7 @@
 
 /* Experience Section */
 .experience-entry {
-  margin-bottom: 14pt;
+  margin-bottom: 20pt;
 }
 
 .experience-entry:last-child {
@@ -187,7 +187,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 6pt;
+  margin-bottom: 8pt;
 }
 
 .job-info {

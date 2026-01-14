@@ -47,12 +47,12 @@
   /* Page breaks */
   .cv-section {
     page-break-inside: avoid;
-    margin-bottom: 1.2em;
+    margin-bottom: 2em;
   }
 
   .experience-entry {
     page-break-inside: avoid;
-    margin-bottom: 1em;
+    margin-bottom: 1.5em;
   }
 
   .education-entry {
@@ -142,8 +142,8 @@
   .job-header {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 0.3em;
+    align-items: flex-start;
+    margin-bottom: 0.5em;
   }
 
   .job-title {

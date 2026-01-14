@@ -17,11 +17,11 @@ export class RateLimiter {
         try {
           const now = Date.now();
           const timeSinceLastCall = now - this.lastCallTime;
-          
+
           if (timeSinceLastCall < this.minInterval) {
             await new Promise(r => setTimeout(r, this.minInterval - timeSinceLastCall));
           }
-          
+
           this.lastCallTime = Date.now();
           const result = await apiCall();
           resolve(result);
@@ -29,14 +29,14 @@ export class RateLimiter {
           reject(error);
         }
       });
-      
+
       this.processQueue();
     });
   }
 
   private async processQueue() {
     if (this.processing || this.queue.length === 0) return;
-    
+
     this.processing = true;
     while (this.queue.length > 0) {
       const call = this.queue.shift();
@@ -61,10 +61,10 @@ export async function analyzeJobWithPerplexity(
   }
 
   // Check for API key - prioritize parameter, then environment variables
-  const finalApiKey = apiKey || 
-    process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY || 
+  const finalApiKey = apiKey ||
+    process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY ||
     process.env.PERPLEXITY_API_KEY;
-    
+
   if (!finalApiKey || finalApiKey === 'your_perplexity_api_key_here') {
     throw new Error('API key required. Please provide your Perplexity API key.');
   }
@@ -86,14 +86,12 @@ Output ONLY valid JSON in this structure:
 Prioritize keywords that appear 3+ times or are emphasized.`;
 
   return rateLimiter.callAPI(async () => {
-    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+    const response = await fetch('/api/analyze-job', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${finalApiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'sonar',
         messages: [
           {
             role: 'system',
@@ -103,9 +101,7 @@ Prioritize keywords that appear 3+ times or are emphasized.`;
             role: 'user',
             content: prompt
           }
-        ],
-        temperature: 0.2,
-        max_tokens: 2000
+        ]
       })
     });
 
@@ -123,7 +119,7 @@ Prioritize keywords that appear 3+ times or are emphasized.`;
     }
 
     const data = await response.json();
-    
+
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
       throw new Error('Invalid response format from Perplexity API');
     }
@@ -138,7 +134,7 @@ Prioritize keywords that appear 3+ times or are emphasized.`;
 
     try {
       const parsed = JSON.parse(cleaned);
-      
+
       // Validate required fields
       if (!parsed.jobTitle || !parsed.mustHaveKeywords || !Array.isArray(parsed.mustHaveKeywords)) {
         throw new Error('Invalid job analysis format');
@@ -179,15 +175,15 @@ class JobAnalysisCache {
   get(jobDescription: string): JobAnalysis | null {
     const key = this.hashJobDescription(jobDescription);
     const cached = this.cache.get(key);
-    
+
     if (!cached) return null;
-    
+
     // Check if cache is expired
     if (Date.now() - cached.timestamp > this.CACHE_DURATION) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return cached.data;
   }
 
@@ -219,10 +215,10 @@ export async function analyzeJobWithCaching(jobDescription: string, apiKey?: str
 
   // Analyze with API
   const analysis = await analyzeJobWithPerplexity(jobDescription, apiKey);
-  
+
   // Cache the result
   jobAnalysisCache.set(jobDescription, analysis);
-  
+
   return analysis;
 }
 
