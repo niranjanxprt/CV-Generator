@@ -13,6 +13,7 @@
 
 /* Print-specific styles */
 @media print {
+
   /* Page setup */
   @page {
     size: A4 portrait;
@@ -281,8 +282,9 @@
 /* Screen preview styles to match print */
 @media screen {
   .printable-cv {
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    min-height: 11in; /* A4 height */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    min-height: 11in;
+    /* A4 height */
   }
 
   .cv-header {

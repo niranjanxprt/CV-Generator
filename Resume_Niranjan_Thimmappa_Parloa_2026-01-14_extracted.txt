@@ -1,0 +1,120 @@
+
+
+Niranjan Thimmappa
+Technical Domain Expert | AI Solutions & Customer Success
+Berlin, Germany•+49 176 3230 2301•thimmappaniranjan@gmail.com
+linkedin.com/in/niranjanthimmappa•github.com/niranjanxprt
+PROFESSIONAL SUMMARY
+Technical domain expert with hands-on experience bridging AI/ML 
+technology and customer success in enterprise environments. 
+At BuildingMinds, led customer-facing AI project delivery includ-
+ing POCs, onboarding, integrations, and use case co-develop-
+ment—achieving 100% project success rate and winning ...
+PROFESSIONAL EXPERIENCE
+Solution Architect | Customer Project Deliv-
+ery & AI Solutions
+10/2023 – Present
+BuildingMinds GmbH, Berlin
+• Revenue Growth & Customer Expansion: Identified upsell 
+opportunities, prepared business cases for platform expansion, 
+and supported account executives with technical deep-dives dur-
+ing sales cycles. Demonstrated ROI through data-driven analysis, 
+customer testimonials, and quantified efficiency gains.
+• Customer Project Delivery & POC Leadership: Led 20+ cus-
+tomer POCs, onboarding projects, and technical integrations for 
+enterprise clients across EMEA, achieving 100% success rate 
+with average project value €50,000+. Served as primary technical 
+expert guiding customers from evaluation through production de-
+ployment, translating complex AI capabilities into business value 
+and measurable outcomes.
+• Cross-Functional Collaboration & Internal SME: Served as 
+bridge between commercial, technical, and product teams, shar-
+ing customer insights, competitive intelligence, and market trends. 
+Provided technical guidance to stakeholders, created documen-
+
+tation and training materials, and championed customer needs in 
+internal discussions.
+• Product Innovation & Customer Feedback Loop: Worked 
+closely with engineering and product teams to identify new use 
+cases, prioritize feature development based on customer feed-
+back, and design platform enhancements. Translated customer 
+pain points into technical requirements, conducted feasibility as-
+sessments, and validated solutions through iterative testing.
+Account Manager | Technical Customer En-
+gagement
+04/2023 – 09/2023
+Energenious GmbH (Climate-Tech Scale-up), Berlin
+• Use Case Development & Market Analysis: Analyzed cus-
+tomer workflows, identified optimization opportunities, and trans-
+lated technical capabilities into customer value propositions. Gath-
+ered market intelligence on competitive solutions and emerging 
+customer needs.
+• Customer-Facing Technical Solutions: Engaged with renew-
+able energy customers to understand requirements, conduct 
+on-site consultations, and demonstrate technical solutions com-
+bining hardware and software optimization algorithms. Repre-
+sented company at Smarter E Munich 2023, Europe's leading 
+renewable energy trade show, generating qualified leads through 
+technical presentations.
+Working Student | Analytics & Technical 
+Systems
+01/2022 – 03/2023
+GE Power Conversion GmbH (Global MedTech/Industrial 
+Leader), Berlin
+• Large Company Experience & Process Understanding: 
+Gained firsthand experience navigating complex organizational 
+structures, quality management systems, and regulatory-aware 
+development processes at global industrial technology leader GE. 
+
+Worked within established frameworks for technical documen-
+tation, validation procedures, and cross-functional collaboration 
+typical of large regulated companies.
+• Technical Specification & Market Intelligence: Conducted 
+competitive analysis of emerging technologies, validated technical 
+specifications for industrial systems, and identified strategic op-
+portunities worth €2M+ through systematic market research and 
+technology assessment.
+• Data Analytics & Forecasting Systems: Built Sales-
+force-based analytics dashboards integrating hardware telemetry 
+data, improving forecast accuracy by 30% through data-driven 
+insights. Demonstrated ability to translate technical data into busi-
+ness intelligence and actionable recommendations for stakehold-
+ers.
+Technical Sales Engineer | Customer Solu-
+tions
+03/2014 – 08/2019
+Arabcal Technical Solutions LLC, Dubai
+• Customer Success & Account Management: Built long-term 
+customer relationships through consultative approach, post-sale 
+support, and continuous value delivery, driving repeat business 
+and referrals.
+• Technical Project Delivery: Delivered 100+ technical projects 
+for major industrial OEMs (Eaton, GE, ABB) and utility companies. 
+Managed €5M+ annual pipeline, conducted technical consulta-
+tions, designed integration solutions, and provided implementa-
+tion support and training.
+EDUCATION
+MBA in Energy Management09/2019 – 03/2023
+Technical University of Berlin (TU Berlin)
+
+B.Tech in Electrical & Electronics Engineer-
+ing
+08/2009 – 05/2013
+SCMS School of Engineering
+TECHNICAL SKILLS & COMPETENCIES
+ML Training Infrastructure:
+Training Pipeline • Experiment Tracking • Custom GPU Kernels • 
+Precision Trade-offs
+Deep Learning Models:
+Attention Mechanisms • Diffusion Models • Autoregressive Models 
+• PyTorch Framework
+GPU & High-Performance Computing:
+GPU Acceleration • Distributed Training • SLURM Clusters • Per-
+formance Optimisation
+LANGUAGES
+English: C1 – Fluent (Native-level professional)
+German: B2 – Professional Working Proficiency
+REFERENCES
+Tobias Ungermanns
+Head of Solution Design, BuildingMinds GmbH
+tobias.ungermanns@buildingminds.com

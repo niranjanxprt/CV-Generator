@@ -3,7 +3,8 @@
 /* Screen Preview - Exact A4 dimensions */
 @media screen {
   .resume-container {
-    max-width: 210mm; /* A4 width */
+    max-width: 210mm;
+    /* A4 width */
     margin: 20px auto;
     background: #f5f5f5;
     padding: 20px;
@@ -12,11 +13,12 @@
 
   .resume-page {
     width: 210mm;
-    min-height: 297mm; /* A4 height */
+    min-height: 297mm;
+    /* A4 height */
     background: white;
     margin-bottom: 20px;
     padding: 20mm;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
   }
 

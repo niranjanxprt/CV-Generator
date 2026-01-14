@@ -209,7 +209,7 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
     // Only save if values have actually changed and are different from initial
     const currentValues = JSON.stringify(watchedValues);
     const initialValues = JSON.stringify(initialProfile);
-    
+
     if (currentValues !== initialValues && watchedValues) {
       debouncedSave(watchedValues);
     }
@@ -226,7 +226,7 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
 
   const addExperience = () => {
     const newExperience: ExperienceEntry = {
-      id: crypto.randomUUID(),
+      id: Math.random().toString(36).substring(7), // Simpler, more stable for client-side
       jobTitle: '',
       company: '',
       location: '',
@@ -247,7 +247,7 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
 
   const addEducation = () => {
     const newEducation: EducationEntry = {
-      id: crypto.randomUUID(),
+      id: Math.random().toString(36).substring(7),
       degree: '',
       field: '',
       institution: '',
@@ -267,7 +267,7 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
 
   const addSkillCategory = () => {
     const newSkillCategory: SkillCategory = {
-      id: crypto.randomUUID(),
+      id: Math.random().toString(36).substring(7),
       name: '',
       skills: []
     };
@@ -284,7 +284,7 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
 
   const addLanguage = () => {
     const newLanguage: LanguageEntry = {
-      id: crypto.randomUUID(),
+      id: Math.random().toString(36).substring(7),
       name: '',
       proficiency: ''
     };
@@ -301,7 +301,7 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
 
   const addReference = () => {
     const newReference: ReferenceEntry = {
-      id: crypto.randomUUID(),
+      id: Math.random().toString(36).substring(7),
       name: '',
       title: '',
       company: '',
@@ -399,9 +399,9 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
                 {profilePhoto && (
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="outline"
                     onClick={removePhoto}
-                    className="text-red-600 hover:text-red-800"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
                   >
                     Remove
                   </Button>
@@ -546,6 +546,7 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
                   <Input
                     {...register(`experience.${index}.jobTitle` as const)}
                     placeholder="Senior Software Engineer"
+                    className="w-full"
                   />
                 </div>
                 <div>
@@ -553,6 +554,7 @@ export function ProfileForm({ initialProfile, onProfileUpdate }: ProfileFormProp
                   <Input
                     {...register(`experience.${index}.company` as const)}
                     placeholder="Tech Company GmbH"
+                    className="w-full"
                   />
                 </div>
                 <div>
