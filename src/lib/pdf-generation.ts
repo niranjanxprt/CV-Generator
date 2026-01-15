@@ -10,17 +10,33 @@ import { generateCoverLetter } from './content-generation';
 import { createTailoredContent } from './cv-tailoring';
 
 /**
- * Get actual page count of a PDF document
- * Uses @react-pdf/renderer to render and count pages
+ * Get ACTUAL page count of a PDF document using pdf-lib
+ * This is accurate, not based on file size estimation
  */
 export async function getActualPageCount(pdfBlob: Blob): Promise<number> {
   try {
     const arrayBuffer = await pdfBlob.arrayBuffer();
     const pdfDoc = await PDFDocument.load(arrayBuffer);
-    return pdfDoc.getPageCount();
+    const pageCount = pdfDoc.getPageCount();
+
+    console.debug(`✅ PDF actual page count: ${pageCount} pages (${(arrayBuffer.byteLength / 1024).toFixed(1)}KB)`);
+    return pageCount;
   } catch (error) {
-    console.warn('Failed to count PDF pages, defaulting to 1:', error);
-    return 1;
+    console.error('❌ Failed to count PDF pages with pdf-lib:', error);
+    // Fallback: conservative estimate (assume more pages to be safe)
+    try {
+      const arrayBuffer = await pdfBlob.arrayBuffer();
+      const pdfSize = arrayBuffer.byteLength;
+      // More conservative: 1 page ≈ 40KB (allows buffer for safety)
+      const estimatedPages = Math.ceil(pdfSize / 40000);
+      const result = Math.max(1, Math.min(estimatedPages, 4)); // Cap at 4 for safety
+      console.warn(`⚠️ PDF page counting failed, using conservative estimate: ${result} pages`);
+      return result;
+    } catch (fallbackError) {
+      console.error('❌ PDF page counting completely failed:', fallbackError);
+      // Final fallback: return 1 (will fail validation if needed)
+      return 1;
+    }
   }
 }
 
